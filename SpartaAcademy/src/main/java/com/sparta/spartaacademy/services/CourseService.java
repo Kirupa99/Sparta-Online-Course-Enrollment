@@ -1,27 +1,121 @@
 package com.sparta.spartaacademy.services;
 
 import com.sparta.spartaacademy.dtos.CourseRequestDTO;
+import com.sparta.spartaacademy.dtos.CourseResponseDTO;
 import com.sparta.spartaacademy.dtos.CourseRequestMapper;
-import com.sparta.spartaacademy.dtos.CourseResponseMapper;
 import com.sparta.spartaacademy.entities.Course;
+import com.sparta.spartaacademy.entities.Trainer;
 import com.sparta.spartaacademy.repositories.CourseRepository;
+import com.sparta.spartaacademy.repositories.TrainerReposittory;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
-public class CourseService {
-    private final CourseRepository courseRepository;
-    private final CourseRequestMapper courseMapper;
+public class CourseService{
 
-    public CourseService(CourseRepository courseRepository, CourseRequestMapper courseMapper) {
-        if (courseRepository == null || courseMapper == null) {
-            throw new IllegalArgumentException("repository and mapper cannot be null");
+    private final CourseRepository courseRepository;
+    private final TrainerReposittory trainerReposittory;
+    private final  CourseRequestMapper courseMapper;
+
+    public CourseService(CourseRepository courseRepository, TrainerReposittory trainerReposittory,  CourseRequestMapper courseMapper) 
+    {
+      if (courseRepository == null || courseMapper == null || trainerReposittory==null) {
+            throw new IllegalArgumentException("repository, trainer and mapper cannot be null");
         }
+      
         this.courseRepository = courseRepository;
-        this.courseMapper = courseMapper;
+        this.trainerReposittory = trainerReposittory;
+        this.courseMapper=courseMapper;
+      
+    }
+ 
+    public CourseResponseDTO createCourse(CourseRequestDTO courseRequestDTO){
+
+        if(courseRepository.existsByCourseName(courseRequestDTO.getCourseName())){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Course with this name already exists");
+        }
+
+        Course course = mapToEntity(courseRequestDTO);
+        Course savedCourse = courseRepository.save(course);
+        CourseResponseDTO responseDTO = mapToResponse(savedCourse);
+
+        return responseDTO;
+    }
+
+    private Course mapToEntity(CourseRequestDTO request){
+
+        Course course = new Course();
+        course.setCourseName(request.getCourseName());
+        course.setDescription(request.getDescription());
+        course.setStartDate(request.getStartDate());
+        course.setEndDate(request.getEndDate());
+        course.setMaxStudents(request.getMaxStudents());
+        if(request.getTrainerIds() != null){
+            List<Trainer> trainers = trainerReposittory.findTrainersByTrainerId(request.getTrainerIds());
+            course.setTrainers(trainers);
+        }
+
+        return course;
+    }
+
+    private CourseResponseDTO mapToResponse(Course course){
+        CourseResponseDTO responseDTO = new CourseResponseDTO();
+        responseDTO.setCourseId(course.getCourseId());
+        responseDTO.setCourseName(course.getCourseName());
+        responseDTO.setDescription(course.getDescription());
+        responseDTO.setStartDate(course.getStartDate());
+        responseDTO.setEndDate(course.getEndDate());
+        responseDTO.setMaxStudents(course.getMaxStudents());
+
+        if(course.getTrainers() != null){
+            responseDTO.setTrainerNames(course.getTrainers()
+                    .stream().map(t -> t.getFirstName() + " " + t.getLastName()).collect(Collectors.toList()));
+        }
+
+        if(course.getTrainees() != null){
+            responseDTO.setTraineeCount(course.getTrainees().size());
+        }
+
+        return responseDTO;
     }
 
 
-    public boolean deleteCourse(int id) {
+    public List<CourseResponseDTO> getAllCourses(){
+
+        List<Course> allCourses =  courseRepository.findAll();
+        return allCourses.stream().map(this::mapToResponse).collect(Collectors.toList());
+
+    }
+
+    public List<CourseResponseDTO> searchCoursesByName(String courseName){
+
+        List<Course> courses = courseRepository.findCoursesByCourseNameContainingIgnoreCase(courseName);
+        return courses.stream().map(this::mapToResponse).collect(Collectors.toList());
+    }
+
+    public CourseResponseDTO updateCourse(Integer courseId, CourseRequestDTO requestDTO){
+
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course with Id: "+ courseId + " not found."));
+        course.setCourseName(requestDTO.getCourseName());
+        course.setDescription(requestDTO.getDescription());
+        course.setStartDate(requestDTO.getStartDate());
+        course.setEndDate(requestDTO.getEndDate());
+        course.setMaxStudents(requestDTO.getMaxStudents());
+
+        if(requestDTO.getTrainerIds() != null){
+            List<Trainer> trainers = trainerReposittory.findAllById(requestDTO.getTrainerIds());
+            course.setTrainers(trainers);
+        }
+
+        Course updatedCourse = courseRepository.save(course);
+        return mapToResponse(updatedCourse);
+    }
+  
+  public boolean deleteCourse(int id) {
         return courseRepository.findById(id)
                 .map(course -> {
                     courseRepository.delete(course);
@@ -29,6 +123,4 @@ public class CourseService {
                 })
                 .orElse(false);
     }
-
-
 }
