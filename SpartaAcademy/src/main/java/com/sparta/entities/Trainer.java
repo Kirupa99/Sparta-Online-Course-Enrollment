@@ -21,7 +21,7 @@ import java.util.List;
         @Column(nullable = false)
         private String email;
 
-        private String specialisation;
+        private List<String> specialisation;
 
         private String phoneNumber;
 
@@ -35,7 +35,7 @@ import java.util.List;
 
         }
         public Trainer(Integer trainerId, String firstName, String lastName,
-                       String email, String specialisation, String phoneNumber) {
+                       String email, List<String> specialisation, String phoneNumber) {
             this.trainerId = trainerId;
             this.firstName = firstName;
             this.lastName = lastName;

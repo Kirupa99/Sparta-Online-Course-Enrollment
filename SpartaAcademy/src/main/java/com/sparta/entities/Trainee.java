@@ -21,7 +21,7 @@ public class Trainee
     @Column(unique = true, nullable = false)
     private String email;
 
-    private String cohort;
+    private String city;
 
     private LocalDate enrolledDate;
 
@@ -43,7 +43,7 @@ public class Trainee
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.cohort = cohort;
+        this.city = cohort;
         this.enrolledDate = enrolledDate;
         this.course = course;
     }

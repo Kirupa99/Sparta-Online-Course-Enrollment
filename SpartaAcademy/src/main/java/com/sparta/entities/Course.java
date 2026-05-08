@@ -1,7 +1,6 @@
 package com.sparta.entities;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDate;
 import java.util.List;
 
@@ -35,8 +34,7 @@ import java.util.List;
 
         }
 
-        public Course(Integer courseId, String courseName, Integer durationWeeks, LocalDate startDate, LocalDate endDate, Integer maxStudents, Trainer trainer, List<Trainee> trainees) {
-            this.courseId = courseId;
+        public Course(String courseName, Integer durationWeeks, LocalDate startDate, LocalDate endDate, Integer maxStudents, Trainer trainer, List<Trainee> trainees) {
             this.courseName = courseName;
             this.durationWeeks = durationWeeks;
             this.startDate = startDate;
