@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SpartaAcademyApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(SpartaAcademyApplication.class, args);
     }
 
