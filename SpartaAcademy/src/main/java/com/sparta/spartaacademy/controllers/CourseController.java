@@ -42,7 +42,7 @@ public class CourseController {
     }
 
 
-    @PutMapping("/{id}")
+    @PutMapping("/{courseId}")
     public ResponseEntity<CourseResponseDTO> updateCourse(@PathVariable Integer courseId,
                                                           @Valid @RequestBody CourseRequestDTO requestDTO){
 

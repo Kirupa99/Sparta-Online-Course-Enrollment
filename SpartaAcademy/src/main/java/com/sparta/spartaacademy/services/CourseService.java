@@ -6,7 +6,7 @@ import com.sparta.spartaacademy.dtos.CourseRequestMapper;
 import com.sparta.spartaacademy.entities.Course;
 import com.sparta.spartaacademy.entities.Trainer;
 import com.sparta.spartaacademy.repositories.CourseRepository;
-import com.sparta.spartaacademy.repositories.TrainerReposittory;
+import com.sparta.spartaacademy.repositories.TrainerRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,17 +18,17 @@ import java.util.stream.Collectors;
 public class CourseService{
 
     private final CourseRepository courseRepository;
-    private final TrainerReposittory trainerReposittory;
+    private final TrainerRepository trainerRepository;
     private final  CourseRequestMapper courseMapper;
 
-    public CourseService(CourseRepository courseRepository, TrainerReposittory trainerReposittory,  CourseRequestMapper courseMapper) 
+    public CourseService(CourseRepository courseRepository, TrainerRepository trainerRepository, CourseRequestMapper courseMapper)
     {
-      if (courseRepository == null || courseMapper == null || trainerReposittory==null) {
+      if (courseRepository == null || courseMapper == null || trainerRepository ==null) {
             throw new IllegalArgumentException("repository, trainer and mapper cannot be null");
         }
       
         this.courseRepository = courseRepository;
-        this.trainerReposittory = trainerReposittory;
+        this.trainerRepository = trainerRepository;
         this.courseMapper=courseMapper;
       
     }
@@ -55,7 +55,7 @@ public class CourseService{
         course.setEndDate(request.getEndDate());
         course.setMaxStudents(request.getMaxStudents());
         if(request.getTrainerIds() != null){
-            List<Trainer> trainers = trainerReposittory.findTrainersByTrainerId(request.getTrainerIds());
+            List<Trainer> trainers = trainerRepository.findAllById(request.getTrainerIds());
             course.setTrainers(trainers);
         }
 
@@ -107,7 +107,7 @@ public class CourseService{
         course.setMaxStudents(requestDTO.getMaxStudents());
 
         if(requestDTO.getTrainerIds() != null){
-            List<Trainer> trainers = trainerReposittory.findAllById(requestDTO.getTrainerIds());
+            List<Trainer> trainers = trainerRepository.findAllById(requestDTO.getTrainerIds());
             course.setTrainers(trainers);
         }
 
