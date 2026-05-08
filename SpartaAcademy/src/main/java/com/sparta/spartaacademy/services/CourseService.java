@@ -2,6 +2,7 @@ package com.sparta.spartaacademy.services;
 
 import com.sparta.spartaacademy.dtos.CourseRequestDTO;
 import com.sparta.spartaacademy.dtos.CourseResponseDTO;
+import com.sparta.spartaacademy.dtos.CourseRequestMapper;
 import com.sparta.spartaacademy.entities.Course;
 import com.sparta.spartaacademy.entities.Trainer;
 import com.sparta.spartaacademy.repositories.CourseRepository;
@@ -18,12 +19,20 @@ public class CourseService{
 
     private final CourseRepository courseRepository;
     private final TrainerReposittory trainerReposittory;
+    private final  CourseRequestMapper courseMapper;
 
-    public CourseService(CourseRepository courseRepository, TrainerReposittory trainerReposittory) {
+    public CourseService(CourseRepository courseRepository, TrainerReposittory trainerReposittory,  CourseRequestMapper courseMapper) 
+    {
+      if (courseRepository == null || courseMapper == null || trainerReposittory==null) {
+            throw new IllegalArgumentException("repository, trainer and mapper cannot be null");
+        }
+      
         this.courseRepository = courseRepository;
         this.trainerReposittory = trainerReposittory;
+        this.courseMapper=courseMapper;
+      
     }
-
+ 
     public CourseResponseDTO createCourse(CourseRequestDTO courseRequestDTO){
 
         if(courseRepository.existsByCourseName(courseRequestDTO.getCourseName())){
@@ -104,5 +113,14 @@ public class CourseService{
 
         Course updatedCourse = courseRepository.save(course);
         return mapToResponse(updatedCourse);
+    }
+  
+  public boolean deleteCourse(int id) {
+        return courseRepository.findById(id)
+                .map(course -> {
+                    courseRepository.delete(course);
+                    return true;
+                })
+                .orElse(false);
     }
 }
