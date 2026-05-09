@@ -4,8 +4,10 @@ import com.sparta.spartaacademy.dtos.CourseRequestDTO;
 import com.sparta.spartaacademy.dtos.CourseResponseDTO;
 import com.sparta.spartaacademy.dtos.CourseRequestMapper;
 import com.sparta.spartaacademy.entities.Course;
+import com.sparta.spartaacademy.entities.Trainee;
 import com.sparta.spartaacademy.entities.Trainer;
 import com.sparta.spartaacademy.repositories.CourseRepository;
+import com.sparta.spartaacademy.repositories.TraineeRepository;
 import com.sparta.spartaacademy.repositories.TrainerRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,17 +21,13 @@ public class CourseService{
 
     private final CourseRepository courseRepository;
     private final TrainerRepository trainerRepository;
-    private final  CourseRequestMapper courseMapper;
+    private final TraineeRepository traineeRepository;
 
-    public CourseService(CourseRepository courseRepository, TrainerRepository trainerRepository, CourseRequestMapper courseMapper)
+    public CourseService(CourseRepository courseRepository, TrainerRepository trainerRepository, TraineeRepository traineeRepository)
     {
-      if (courseRepository == null || courseMapper == null || trainerRepository ==null) {
-            throw new IllegalArgumentException("repository, trainer and mapper cannot be null");
-        }
-      
         this.courseRepository = courseRepository;
         this.trainerRepository = trainerRepository;
-        this.courseMapper=courseMapper;
+        this.traineeRepository = traineeRepository;
       
     }
  
@@ -78,6 +76,8 @@ public class CourseService{
 
         if(course.getTrainees() != null){
             responseDTO.setTraineeCount(course.getTrainees().size());
+        }else{
+            responseDTO.setTraineeCount(0);
         }
 
         return responseDTO;
@@ -89,6 +89,13 @@ public class CourseService{
         List<Course> allCourses =  courseRepository.findAll();
         return allCourses.stream().map(this::mapToResponse).collect(Collectors.toList());
 
+    }
+
+    public CourseResponseDTO getCourseById(Integer id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Course not found with id: " + id));
+        return mapToResponse(course);
     }
 
     public List<CourseResponseDTO> searchCoursesByName(String courseName){
@@ -122,5 +129,30 @@ public class CourseService{
                     return true;
                 })
                 .orElse(false);
+    }
+
+
+    public CourseResponseDTO enrollTrainee(Integer courseId, Integer traineeId){
+
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course with courseId : "+courseId+" not found"));
+
+        Trainee trainee = traineeRepository.findById(traineeId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Trainee with traineeId : "+ traineeId+ " not found"));
+
+        if(trainee.getCourse() != null && trainee.getCourse().getCourseId().equals(courseId)){
+            throw  new ResponseStatusException(HttpStatus.CONFLICT, "Trainee is already enrolled in this course");
+        }
+
+        trainee.setCourse(course);
+        traineeRepository.save(trainee);
+
+        return mapToResponse(course);
+    }
+
+
+    public List<CourseResponseDTO> getTrainersCourses(Integer trainerId){
+
+        Trainer trainer = trainerRepository.findById(trainerId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Trainer with trainerId : "+ trainerId + " not found"));
+
+        return trainer.getCourses().stream().map(this::mapToResponse).collect(Collectors.toList());
     }
 }
