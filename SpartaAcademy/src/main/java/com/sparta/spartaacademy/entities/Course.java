@@ -46,8 +46,7 @@ public class Course {
 
     }
 
-    public Course(Integer courseId, String courseName, String description, LocalDate startDate, LocalDate endDate, Integer maxStudents, List<Trainer> trainers) {
-        this.courseId = courseId;
+    public Course(String courseName, String description, LocalDate startDate, LocalDate endDate, Integer maxStudents, List<Trainer> trainers) {
         this.courseName = courseName;
         this.description = description;
         this.startDate = startDate;
@@ -56,13 +55,8 @@ public class Course {
         this.trainers = trainers;
     }
 
-
     public Integer getCourseId() {
         return courseId;
-    }
-
-    public void setCourseId(Integer courseId) {
-        this.courseId = courseId;
     }
 
     public String getCourseName() {

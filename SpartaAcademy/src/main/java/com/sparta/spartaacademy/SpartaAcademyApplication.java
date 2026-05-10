@@ -10,7 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories("com.sparta.spartaacademy.repositories")
 public class SpartaAcademyApplication {
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
 
         SpringApplication.run(SpartaAcademyApplication.class, args);
     }
