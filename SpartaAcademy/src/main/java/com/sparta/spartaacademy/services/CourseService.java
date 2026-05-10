@@ -2,7 +2,6 @@ package com.sparta.spartaacademy.services;
 
 import com.sparta.spartaacademy.dtos.CourseRequestDTO;
 import com.sparta.spartaacademy.dtos.CourseResponseDTO;
-import com.sparta.spartaacademy.dtos.CourseRequestMapper;
 import com.sparta.spartaacademy.entities.Course;
 import com.sparta.spartaacademy.entities.Trainee;
 import com.sparta.spartaacademy.entities.Trainer;

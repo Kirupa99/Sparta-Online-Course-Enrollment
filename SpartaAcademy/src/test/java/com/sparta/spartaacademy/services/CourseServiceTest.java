@@ -1,4 +1,4 @@
-package services;
+package com.sparta.spartaacademy.services;
 
 import com.sparta.spartaacademy.dtos.CourseRequestDTO;
 import com.sparta.spartaacademy.dtos.CourseResponseDTO;
@@ -8,7 +8,6 @@ import com.sparta.spartaacademy.entities.Trainer;
 import com.sparta.spartaacademy.repositories.CourseRepository;
 import com.sparta.spartaacademy.repositories.TraineeRepository;
 import com.sparta.spartaacademy.repositories.TrainerRepository;
-import com.sparta.spartaacademy.services.CourseService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
