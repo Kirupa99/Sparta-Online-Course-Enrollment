@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface TrainerRepository extends JpaRepository<Trainer, Integer> {
 
+    boolean existsByEmail(String email);
 }
