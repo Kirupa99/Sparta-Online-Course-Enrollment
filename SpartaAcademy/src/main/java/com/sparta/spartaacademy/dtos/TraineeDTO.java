@@ -1,14 +1,31 @@
 package com.sparta.spartaacademy.dtos;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDate;
 
+@Schema(description = "Trainee data transfer object")
 public class TraineeDTO {
+
+    @Schema(description = "Trainee ID", example = "1")
     private Integer traineeId;
+
+    @Schema(description = "First name of the trainee", example = "John")
     private String firstName;
+
+    @Schema(description = "Last name of the trainee", example = "Doe")
     private String lastName;
+
+    @Schema(description = "Email address of the trainee", example = "john.doe@email.com")
     private String email;
+
+    @Schema(description = "City where the trainee is based", example = "London")
     private String city;
+
+    @Schema(description = "Date the trainee enrolled", example = "2024-01-15")
     private LocalDate enrolledDate;
+
+    @Schema(description = "ID of the course the trainee is enrolled on", example = "2")
     private Integer courseId;
 
     public TraineeDTO() {}

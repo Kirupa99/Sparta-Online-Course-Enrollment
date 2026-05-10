@@ -20,9 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TrainerServiceTest {
@@ -85,10 +83,10 @@ class TrainerServiceTest {
 
     @Test
     void getTrainerById_includesCourseIds() {
-        Course c1 = new Course();
-        c1.setCourseId(10);
-        Course c2 = new Course();
-        c2.setCourseId(20);
+        Course c1 = mock(Course.class);
+        when(c1.getCourseId()).thenReturn(10);
+        Course c2 = mock(Course.class);
+        when(c2.getCourseId()).thenReturn(20);
         trainer.setCourses(List.of(c1, c2));
         when(trainerRepository.findById(1)).thenReturn(Optional.of(trainer));
 
