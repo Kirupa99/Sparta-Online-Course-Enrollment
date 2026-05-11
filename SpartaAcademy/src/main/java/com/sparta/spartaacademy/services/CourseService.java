@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -121,13 +122,41 @@ public class CourseService{
         return mapToResponse(updatedCourse);
     }
   
-  public boolean deleteCourse(int id) {
-        return courseRepository.findById(id)
-                .map(course -> {
-                    courseRepository.delete(course);
-                    return true;
-                })
-                .orElse(false);
+//  public boolean deleteCourse(int id) {
+//        return courseRepository.findById(id)
+//                .map(course -> {
+//                    courseRepository.delete(course);
+//                    return true;
+//                })
+//                .orElse(false);
+//    }
+
+
+    public boolean deleteCourse(int id){
+
+        Optional<Course> optionalCourse = courseRepository.findById(id);
+
+        if(optionalCourse.isEmpty()){
+            return false;
+        }
+
+        Course course = optionalCourse.get();
+
+        if(course.getTrainees() != null){
+            for(Trainee trainee : course.getTrainees()){
+                trainee.setCourse(null);
+            }
+
+            traineeRepository.saveAll(course.getTrainees());
+        }
+
+        if(course.getTrainers() != null){
+            course.getTrainers().clear();
+            courseRepository.save(course);
+        }
+
+        courseRepository.delete(course);
+        return true;
     }
 
 
