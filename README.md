@@ -76,14 +76,9 @@ It supports CRUD operations, trainee enrolment, trainer-course assignments, and 
 
 # Relationships
 
-* One Trainer can have many Trainees
-* One Trainer can teach many Courses
-
-* One Course can contain many Trainees
-* One Course can contain many Trainers
-
-* Each Trainee belongs to one Course
-* Each Trainee will be under one Trainer
+- One Trainer can teach many Courses (ManyToMany via course_trainer join table)
+- One Course can have many Trainees (OneToMany)
+- One Trainee belongs to one Course (ManyToOne)
 
 ---
 

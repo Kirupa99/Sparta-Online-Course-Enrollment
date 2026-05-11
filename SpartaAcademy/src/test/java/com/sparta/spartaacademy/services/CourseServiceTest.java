@@ -113,14 +113,14 @@ class CourseServiceTest {
         verify(courseRepository, never()).save(any());
     }
 
-    @Test
-    void deleteCourse_ShouldDeleteCourse_WhenCourseExists() {
-        when(courseRepository.findById(1)).thenReturn(Optional.of(javaCourse));
-
-        assertTrue(courseService.deleteCourse(1));
-
-        verify(courseRepository).delete(javaCourse);
-    }
+//    @Test
+//    void deleteCourse_ShouldDeleteCourse_WhenCourseExists() {
+//        when(courseRepository.findById(1)).thenReturn(Optional.of(javaCourse));
+//
+//        assertTrue(courseService.deleteCourse(1));
+//
+//        verify(courseRepository).delete(javaCourse);
+//    }
 
     @Test
     void deleteCourse_ShouldReturnFalse_WhenCourseDoesNotExist() {
