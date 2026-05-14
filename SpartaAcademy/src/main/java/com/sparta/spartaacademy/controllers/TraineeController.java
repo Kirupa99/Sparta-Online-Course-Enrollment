@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/trainees")
-@Tag(name = "Trainee Management", description = "Endpoints for managing trainees")
+@RequestMapping("/api/trainees")
+@Tag(name = "trainee-controller", description = "Endpoints for managing trainees")
 public class TraineeController {
 
     private final TraineeService traineeService;
