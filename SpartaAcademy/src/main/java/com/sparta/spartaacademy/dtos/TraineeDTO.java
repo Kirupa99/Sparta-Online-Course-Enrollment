@@ -1,6 +1,7 @@
 package com.sparta.spartaacademy.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 
@@ -18,6 +19,12 @@ public class TraineeDTO {
 
     @Schema(description = "Email address of the trainee", example = "john.doe@email.com")
     private String email;
+
+    @NotBlank(message = "Password is required")
+    private String password;
+
+    @NotBlank(message = "Role is required")
+    private String role;
 
     @Schema(description = "City where the trainee is based", example = "London")
     private String city;
@@ -62,4 +69,10 @@ public class TraineeDTO {
 
     public Integer getCourseId() { return courseId; }
     public void setCourseId(Integer courseId) { this.courseId = courseId; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 }
