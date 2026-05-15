@@ -15,6 +15,12 @@ public class TrainerRequestDTO {
     @Email(message = "Email must be valid")
     private String email;
 
+    @NotBlank(message = "Password is required")
+    private String password;
+
+    @NotBlank(message = "Role is required")
+    private String role;
+
     private String phoneNumber;
 
     public TrainerRequestDTO() {}
@@ -57,4 +63,10 @@ public class TrainerRequestDTO {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 }
