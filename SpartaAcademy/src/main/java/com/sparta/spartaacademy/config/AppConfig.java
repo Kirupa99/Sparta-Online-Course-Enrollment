@@ -81,11 +81,13 @@ public class AppConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/trainers/**").hasRole("TRAINER")
+                        .requestMatchers("/dashboard").authenticated()
                         .requestMatchers("/api/trainees/**").hasAnyRole("TRAINER", "TRAINEE")
                         .requestMatchers("/api/courses/**").hasAnyRole("TRAINER", "TRAINEE")
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form.permitAll())
+                .formLogin(form -> form.defaultSuccessUrl("/dashboard", true)
+                        .permitAll())
                 .csrf(csrf -> csrf.disable());
 
         return http.build();
