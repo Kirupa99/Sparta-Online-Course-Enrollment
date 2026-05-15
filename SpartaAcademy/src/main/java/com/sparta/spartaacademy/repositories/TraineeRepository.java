@@ -6,6 +6,7 @@ import com.sparta.spartaacademy.entities.Course;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TraineeRepository extends JpaRepository<Trainee, Integer> {
@@ -15,6 +16,8 @@ public interface TraineeRepository extends JpaRepository<Trainee, Integer> {
     List<Trainee> findByCourse_CourseId(Integer courseId);
 
     boolean existsByEmail(String email);
+
+    Optional<Trainee> findByEmail(String email);
 
     Integer course(Course course);
 }

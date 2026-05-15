@@ -6,9 +6,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TrainerRepository extends JpaRepository<Trainer, Integer> {
 
     boolean existsByEmail(String email);
+
+    Optional<Trainer> findByEmail(String email);
 }
