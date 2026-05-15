@@ -1,4 +1,6 @@
-# Copy this file to application.properties and fill in your local DB credentials.
+# First-time setup: copy this file to application.properties and replace
+# YOUR_DB_USERNAME / YOUR_DB_PASSWORD with your local MySQL credentials.
+# Spring Boot reads application.properties; this .example file is just a template.
 
 spring.application.name=SpartaAcademy
 

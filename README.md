@@ -116,22 +116,13 @@ The database will be created automatically by Spring Boot using the `createDatab
 
 ## 3. Configure application.properties
 
-```properties
-spring.application.name=SpartaAcademy
+`application.properties` is gitignored so each developer manages their own DB credentials. Copy the template and fill in your details:
 
-spring.datasource.url=jdbc:mysql://localhost:3306/sparta-academy?createDatabaseIfNotExist=true
-spring.datasource.username= yourusername
-spring.datasource.password= yourpassword
-server.port=8081
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
-spring.jpa.properties.hibernate.format_sql=true
-spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
-logging.level.org.hibernate.SQL=DEBUG
-logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+```bash
+cp SpartaAcademy/src/main/resources/application.properties.example SpartaAcademy/src/main/resources/application.properties
 ```
+
+Then open the new `application.properties` and replace `YOUR_DB_USERNAME` / `YOUR_DB_PASSWORD` with your local MySQL credentials.
 
 ---
 
