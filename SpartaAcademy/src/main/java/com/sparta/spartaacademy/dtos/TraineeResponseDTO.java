@@ -1,12 +1,11 @@
 package com.sparta.spartaacademy.dtos;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 
-@Schema(description = "Trainee data transfer object")
-public class TraineeDTO {
+@Schema(description = "Response DTO returned when reading trainee data")
+public class TraineeResponseDTO {
 
     @Schema(description = "Trainee ID", example = "1")
     private Integer traineeId;
@@ -20,12 +19,6 @@ public class TraineeDTO {
     @Schema(description = "Email address of the trainee", example = "john.doe@email.com")
     private String email;
 
-    @NotBlank(message = "Password is required")
-    private String password;
-
-    @NotBlank(message = "Role is required")
-    private String role;
-
     @Schema(description = "City where the trainee is based", example = "London")
     private String city;
 
@@ -35,11 +28,11 @@ public class TraineeDTO {
     @Schema(description = "ID of the course the trainee is enrolled on", example = "2")
     private Integer courseId;
 
-    public TraineeDTO() {}
+    public TraineeResponseDTO() {}
 
-    public TraineeDTO(Integer traineeId, String firstName, String lastName,
-                      String email, String city, LocalDate enrolledDate,
-                      Integer courseId) {
+    public TraineeResponseDTO(Integer traineeId, String firstName, String lastName,
+                              String email, String city, LocalDate enrolledDate,
+                              Integer courseId) {
         this.traineeId = traineeId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -69,10 +62,4 @@ public class TraineeDTO {
 
     public Integer getCourseId() { return courseId; }
     public void setCourseId(Integer courseId) { this.courseId = courseId; }
-
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
-
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
 }
