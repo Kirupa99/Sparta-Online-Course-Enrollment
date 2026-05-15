@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body class="bg-white">
+
+<!-- Header -->
+<div th:replace="~{header :: header}"></div>
+
+<div class="container-fluid border border-dark border-2 min-vh-100 mt-3 w-95">
+
+    <div class="container py-5">
+
+        <!-- Greeting -->
+        <div class="mb-5">
+
+            <h2 class="fw-bold">
+                Hi,
+                <span th:text="${username}"></span>
+            </h2>
+
+        </div>
+
+        <!-- Heading -->
+        <div class="text-center mb-5">
+
+            <h1 class="fw-bold">
+                Welcome to the Sparta Course Enrollment
+            </h1>
+
+        </div>
+
+        <!-- Main Buttons -->
+        <div class="d-flex justify-content-center gap-5 flex-wrap mb-5">
+
+            <a th:href="@{/courses}">
+                <button class="btn btn-dark rounded-0 px-4 py-3 fw-bold">
+                    View All Courses
+                </button>
+            </a>
+
+            <a th:href="@{/trainees}">
+                <button class="btn btn-dark rounded-0 px-4 py-3 fw-bold">
+                    View All Trainees
+                </button>
+            </a>
+
+            <a th:href="@{/assign-trainer}">
+                <button class="btn btn-dark rounded-0 px-4 py-3 fw-bold">
+                    Assign Trainer to Trainee
+                </button>
+            </a>
+
+        </div>
+
+        <!-- Bottom Button -->
+        <div class="text-center mt-5">
+
+            <a th:href="@{/profile/update}">
+                <button class="btn btn-dark rounded-0 px-5 py-3 fw-bold">
+                    Update User Profile
+                </button>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Footer -->
+<div th:replace="~{footer :: footer}"></div>
+
+</body>
+</html>
