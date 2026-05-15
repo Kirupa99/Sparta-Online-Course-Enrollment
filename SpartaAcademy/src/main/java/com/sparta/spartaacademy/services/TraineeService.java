@@ -1,50 +1,60 @@
 package com.sparta.spartaacademy.services;
 
-import com.sparta.spartaacademy.dtos.TraineeDTO;
+import com.sparta.spartaacademy.dtos.TraineeMapper;
+import com.sparta.spartaacademy.dtos.TraineeRequestDTO;
+import com.sparta.spartaacademy.dtos.TraineeResponseDTO;
 import com.sparta.spartaacademy.entities.Trainee;
 import com.sparta.spartaacademy.repositories.TraineeRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
 public class TraineeService {
 
     private final TraineeRepository traineeRepository;
+    private final TraineeMapper traineeMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public TraineeService(TraineeRepository traineeRepository) {
+    public TraineeService(TraineeRepository traineeRepository,
+                          TraineeMapper traineeMapper,
+                          PasswordEncoder passwordEncoder) {
         this.traineeRepository = traineeRepository;
+        this.traineeMapper = traineeMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public TraineeDTO createTrainee(TraineeDTO dto) {
+    public TraineeResponseDTO createTrainee(TraineeRequestDTO dto) {
         if (traineeRepository.existsByEmail(dto.getEmail())) {
             throw new IllegalArgumentException("Email already exists: " + dto.getEmail());
         }
-        Trainee trainee = mapToEntity(dto);
-        return mapToDTO(traineeRepository.save(trainee));
+        Trainee trainee = traineeMapper.toEntity(dto);
+        trainee.setPassword(passwordEncoder.encode(dto.getPassword()));
+        return traineeMapper.toResponseDTO(traineeRepository.save(trainee));
     }
 
-    public TraineeDTO getTraineeById(Integer id) {
+    public TraineeResponseDTO getTraineeById(Integer id) {
         Trainee trainee = traineeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Trainee not found with id: " + id));
-        return mapToDTO(trainee);
+        return traineeMapper.toResponseDTO(trainee);
     }
 
-    public List<TraineeDTO> getAllTrainees() {
+    public List<TraineeResponseDTO> getAllTrainees() {
         return traineeRepository.findAll()
                 .stream()
-                .map(this::mapToDTO)
+                .map(traineeMapper::toResponseDTO)
                 .toList();
     }
 
-    public TraineeDTO updateTrainee(Integer id, TraineeDTO dto) {
+    public TraineeResponseDTO updateTrainee(Integer id, TraineeRequestDTO dto) {
         Trainee trainee = traineeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Trainee not found with id: " + id));
-        trainee.setFirstName(dto.getFirstName());
-        trainee.setLastName(dto.getLastName());
-        trainee.setEmail(dto.getEmail());
-        trainee.setCity(dto.getCity());
-        trainee.setEnrolledDate(dto.getEnrolledDate());
-        return mapToDTO(traineeRepository.save(trainee));
+        traineeMapper.updateEntity(dto, trainee);
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            trainee.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+        return traineeMapper.toResponseDTO(traineeRepository.save(trainee));
     }
 
     public void deleteTrainee(Integer id) {
@@ -54,39 +64,18 @@ public class TraineeService {
         traineeRepository.deleteById(id);
     }
 
-    public List<TraineeDTO> findByName(String firstName) {
+    public List<TraineeResponseDTO> findByName(String firstName) {
         return traineeRepository.findByFirstNameContainingIgnoreCase(firstName)
                 .stream()
-                .map(this::mapToDTO)
+                .map(traineeMapper::toResponseDTO)
                 .toList();
     }
 
-    public List<TraineeDTO> findByCourse(Integer courseId) {
+    public List<TraineeResponseDTO> findByCourse(Integer courseId) {
         return traineeRepository.findByCourse_CourseId(courseId)
                 .stream()
-                .map(this::mapToDTO)
+                .map(traineeMapper::toResponseDTO)
                 .toList();
     }
-
-    private TraineeDTO mapToDTO(Trainee trainee) {
-        return new TraineeDTO(
-                trainee.getTraineeId(),
-                trainee.getFirstName(),
-                trainee.getLastName(),
-                trainee.getEmail(),
-                trainee.getCity(),
-                trainee.getEnrolledDate(),
-                trainee.getCourse() != null ? trainee.getCourse().getCourseId() : null
-        );
-    }
-
-    private Trainee mapToEntity(TraineeDTO dto) {
-        Trainee trainee = new Trainee();
-        trainee.setFirstName(dto.getFirstName());
-        trainee.setLastName(dto.getLastName());
-        trainee.setEmail(dto.getEmail());
-        trainee.setCity(dto.getCity());
-        trainee.setEnrolledDate(dto.getEnrolledDate());
-        return trainee;
-    }
 }
+
