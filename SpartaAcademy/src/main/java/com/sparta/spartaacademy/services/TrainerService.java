@@ -5,7 +5,9 @@ import com.sparta.spartaacademy.dtos.TrainerResponseDTO;
 import com.sparta.spartaacademy.entities.Course;
 import com.sparta.spartaacademy.entities.Trainer;
 import com.sparta.spartaacademy.repositories.TrainerRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
@@ -21,7 +23,7 @@ public class TrainerService {
 
     public TrainerResponseDTO createTrainer(TrainerRequestDTO dto) {
         if (trainerRepository.existsByEmail(dto.getEmail())) {
-            throw new IllegalArgumentException("Email already exists: " + dto.getEmail());
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists: " + dto.getEmail());
         }
         Trainer trainer = mapToEntity(dto);
         return mapToDTO(trainerRepository.save(trainer));
@@ -29,7 +31,7 @@ public class TrainerService {
 
     public TrainerResponseDTO getTrainerById(Integer id) {
         Trainer trainer = trainerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Trainer not found with id: " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Trainer not found with id: " + id));
         return mapToDTO(trainer);
     }
 
@@ -42,7 +44,7 @@ public class TrainerService {
 
     public TrainerResponseDTO updateTrainer(Integer id, TrainerRequestDTO dto) {
         Trainer trainer = trainerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Trainer not found with id: " + id));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Trainer not found with id: " + id));
         trainer.setFirstName(dto.getFirstName());
         trainer.setLastName(dto.getLastName());
         trainer.setEmail(dto.getEmail());
@@ -52,7 +54,7 @@ public class TrainerService {
 
     public void deleteTrainer(Integer id) {
         if (!trainerRepository.existsById(id)) {
-            throw new RuntimeException("Trainer not found with id: " + id);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Trainer not found with id: " + id);
         }
         trainerRepository.deleteById(id);
     }

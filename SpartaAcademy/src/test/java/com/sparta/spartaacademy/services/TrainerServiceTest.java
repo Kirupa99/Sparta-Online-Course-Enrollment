@@ -11,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -63,10 +65,11 @@ class TrainerServiceTest {
     void createTrainer_throwsWhenEmailExists() {
         when(trainerRepository.existsByEmail("curtis.logan@example.com")).thenReturn(true);
 
-        IllegalArgumentException ex = assertThrows(
-                IllegalArgumentException.class,
+        ResponseStatusException ex = assertThrows(
+                ResponseStatusException.class,
                 () -> trainerService.createTrainer(requestDTO)
         );
+        assertEquals(HttpStatus.CONFLICT, ex.getStatusCode());
         assertTrue(ex.getMessage().contains("Email already exists"));
         verify(trainerRepository, never()).save(any(Trainer.class));
     }
@@ -99,10 +102,11 @@ class TrainerServiceTest {
     void getTrainerById_throwsWhenMissing() {
         when(trainerRepository.findById(99)).thenReturn(Optional.empty());
 
-        RuntimeException ex = assertThrows(
-                RuntimeException.class,
+        ResponseStatusException ex = assertThrows(
+                ResponseStatusException.class,
                 () -> trainerService.getTrainerById(99)
         );
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
         assertTrue(ex.getMessage().contains("99"));
     }
 
@@ -139,8 +143,9 @@ class TrainerServiceTest {
     void updateTrainer_throwsWhenMissing() {
         when(trainerRepository.findById(99)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class,
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
                 () -> trainerService.updateTrainer(99, requestDTO));
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
         verify(trainerRepository, never()).save(any(Trainer.class));
     }
 
@@ -157,8 +162,9 @@ class TrainerServiceTest {
     void deleteTrainer_throwsWhenMissing() {
         when(trainerRepository.existsById(99)).thenReturn(false);
 
-        assertThrows(RuntimeException.class,
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
                 () -> trainerService.deleteTrainer(99));
+        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
         verify(trainerRepository, never()).deleteById(anyInt());
     }
 }
