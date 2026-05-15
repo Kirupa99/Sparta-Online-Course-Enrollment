@@ -1,8 +1,12 @@
+# First-time setup: copy this file to application.properties and replace
+# YOUR_DB_USERNAME / YOUR_DB_PASSWORD with your local MySQL credentials.
+# Spring Boot reads application.properties; this .example file is just a template.
+
 spring.application.name=SpartaAcademy
 
 spring.datasource.url=jdbc:mysql://localhost:3306/sparta-academy?createDatabaseIfNotExist=true
-spring.datasource.username=root
-spring.datasource.password=root
+spring.datasource.username=YOUR_DB_USERNAME
+spring.datasource.password=YOUR_DB_PASSWORD
 server.port=8081
 
 #Hibernate
@@ -19,6 +23,3 @@ springdoc.api-docs.enabled=true
 springdoc.swagger-ui.enabled=true
 springdoc.enable-data-rest=false
 #springdoc.enable-hateoas=false
-
-
-
