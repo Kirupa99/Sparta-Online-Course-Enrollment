@@ -1,73 +1,110 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<body class="bg-white">
+<body class="bg-light">
 
-<!-- Header -->
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="container-fluid border border-dark border-2 min-vh-100 mt-3 w-95">
+<div class="container py-5">
 
-    <div class="container py-5">
+    <div class="row justify-content-center g-4">
 
-        <!-- Greeting -->
-        <div class="mb-5">
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-body p-4">
 
-            <h2 class="fw-bold">
-                Hi,
-                <span th:text="${username}"></span>
-            </h2>
+                    <div class="display-3 mb-3">🎓</div>
 
+                    <h3 class="card-title fw-bold">
+                        Available Courses
+                    </h3>
+
+                    <p class="card-text text-muted">
+                        View all the available courses in the academy.
+                    </p>
+
+                    <a th:href="@{/trainer/view_courses}"
+                       class="btn btn-danger mt-3">
+                        View Now
+                    </a>
+
+                </div>
+            </div>
         </div>
 
-        <!-- Heading -->
-        <div class="text-center mb-5">
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-body p-4">
 
-            <h1 class="fw-bold">
-                Welcome to the Sparta Course Enrollment
-            </h1>
+                    <div class="display-3 mb-3">👤</div>
 
+                    <h3 class="card-title fw-bold">
+                        View all Trainee Spartans
+                    </h3>
+
+                    <p class="card-text text-muted">
+                        View all the Spartans.
+                    </p>
+
+                    <a th:href="@{/trainer/view_trainees}"
+                       class="btn btn-danger mt-3">
+                        View Now
+                    </a>
+
+                </div>
+            </div>
         </div>
 
-        <!-- Main Buttons -->
-        <div class="d-flex justify-content-center gap-5 flex-wrap mb-5">
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-body p-4">
 
-            <a th:href="@{/courses}">
-                <button class="btn btn-dark rounded-0 px-4 py-3 fw-bold">
-                    View All Courses
-                </button>
-            </a>
+                    <div class="display-3 mb-3">👨‍🏫</div>
 
-            <a th:href="@{/trainees}">
-                <button class="btn btn-dark rounded-0 px-4 py-3 fw-bold">
-                    View All Trainees
-                </button>
-            </a>
+                    <h3 class="card-title fw-bold">
+                        Assign Trainer to Trainee
+                    </h3>
 
-            <a th:href="@{/assign-trainer}">
-                <button class="btn btn-dark rounded-0 px-4 py-3 fw-bold">
-                    Assign Trainer to Trainee
-                </button>
-            </a>
+                    <p class="card-text text-muted">
+                        Assign a trainee with a trainer.
+                    </p>
 
+                    <a th:href="@{/trainer/assign_trainee}"
+                       class="btn btn-danger mt-3">
+                        Assign Now
+                    </a>
+
+                </div>
+            </div>
         </div>
 
-        <!-- Bottom Button -->
-        <div class="text-center mt-5">
+        <div class="col-md-4">
+            <div class="card text-center shadow-sm h-100">
+                <div class="card-body p-4">
 
-            <a th:href="@{/profile/update}">
-                <button class="btn btn-dark rounded-0 px-5 py-3 fw-bold">
-                    Update User Profile
-                </button>
-            </a>
+                    <div class="display-3 mb-3">⚙️</div>
 
+                    <h3 class="card-title fw-bold">
+                        User Profile
+                    </h3>
+
+                    <p class="card-text text-muted">
+                        View and update your trainer profile details.
+                    </p>
+
+                    <a th:href="@{/trainer/profile}"
+                       class="btn btn-danger mt-3">
+                        Access Now
+                    </a>
+
+                </div>
+            </div>
         </div>
 
     </div>
 
 </div>
 
-<!-- Footer -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>

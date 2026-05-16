@@ -10,26 +10,92 @@
           rel="stylesheet">
 
     <!-- Navbar -->
-    <div class="container-fluid border border-dark border-2 mt-2">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 
-        <div class="row bg-info-subtle py-3 px-4">
+        <div class="container">
 
-            <div class="col d-flex justify-content-between align-items-center">
+            <a class="navbar-brand fw-bold"
+               th:href="@{/dashboard}">
+                Sparta Academy
+            </a>
 
-                <form th:action="@{/logout}" method="post">
+            <div class="collapse navbar-collapse">
 
-                    <button type="submit"
-                            class="btn btn-dark rounded-0 px-5 py-2 fw-bold">
-                        Logout
-                    </button>
+                <ul class="navbar-nav ms-auto align-items-center">
 
-                </form>
+                    <li class="nav-item me-3">
+
+                        <a class="nav-link active fw-semibold"
+                           th:href="@{/dashboard}">
+                            Dashboard
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item me-3">
+
+                        <a class="nav-link active fw-semibold"
+                           th:href="@{/dashboard}">
+                            Dashboard
+                        </a>
+
+                    </li>
+
+                    <li class="nav-item">
+
+                        <form th:action="@{/logout}" method="post">
+
+                            <button type="submit"
+                                    class="btn btn-danger">
+                                Logout
+                            </button>
+
+                        </form>
+
+                    </li>
+
+                </ul>
 
             </div>
 
         </div>
 
-    </div>
+    </nav>
+
+    <!-- Profile Header -->
+    <header class="bg-white py-4 border-bottom">
+
+        <div class="container">
+
+            <div class="d-flex align-items-center gap-4">
+
+                <img th:src="@{'/' + ${#strings.toLowerCase(name)} + '.jpg'}"
+                     src="/default.jpg"
+                     alt="Profile Image"
+                     class="rounded-circle"
+                     width="90"
+                     height="90">
+
+                <div>
+
+                    <h3 class="fst-italic text-muted mb-1">
+
+                        Hey
+                        <span th:text="${name}">User</span>,
+
+                    </h3>
+
+                    <p class="text-secondary mb-0">
+                        Welcome to Sparta Course Enrollment
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </header>
 
 </div>
 
