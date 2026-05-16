@@ -5,9 +5,10 @@ import com.sparta.spartaacademy.entities.Trainer;
 import com.sparta.spartaacademy.repositories.CourseRepository;
 import com.sparta.spartaacademy.repositories.TraineeRepository;
 import com.sparta.spartaacademy.repositories.TrainerRepository;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,9 +18,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Configuration
+@EnableMethodSecurity
 public class AppConfig {
-
-//private final TrainerRepository trainerRepo;
 
     @Bean
     public CommandLineRunner loadData(TrainerRepository trainerRepo,
@@ -70,7 +70,6 @@ public class AppConfig {
         };
     }
 
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -80,14 +79,21 @@ public class AppConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/trainers/**").hasRole("TRAINER")
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**"
+                        ).permitAll()
                         .requestMatchers("/dashboard").authenticated()
+                        .requestMatchers("/api/trainers/**").hasRole("TRAINER")
                         .requestMatchers("/api/trainees/**").hasAnyRole("TRAINER", "TRAINEE")
                         .requestMatchers("/api/courses/**").hasAnyRole("TRAINER", "TRAINEE")
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form.defaultSuccessUrl("/dashboard", true)
-                        .permitAll())
+                .formLogin(form -> form
+                        .defaultSuccessUrl("/dashboard", true)
+                        .permitAll()
+                )
                 .csrf(csrf -> csrf.disable());
 
         return http.build();
