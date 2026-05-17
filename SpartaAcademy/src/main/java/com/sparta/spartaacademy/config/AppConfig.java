@@ -5,6 +5,7 @@ import com.sparta.spartaacademy.entities.Trainer;
 import com.sparta.spartaacademy.repositories.CourseRepository;
 import com.sparta.spartaacademy.repositories.TraineeRepository;
 import com.sparta.spartaacademy.repositories.TrainerRepository;
+import com.sparta.spartaacademy.services.CustomUserDetailsService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,42 @@ import java.util.List;
 @Configuration
 @EnableMethodSecurity
 public class AppConfig {
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           CustomUserDetailsService customUserDetailsService,
+                                           PasswordEncoder passwordEncoder) throws Exception {
+        http
+                .userDetailsService(customUserDetailsService)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/signup/trainer",
+                                "/signup/trainee",
+                                "/login"
+                        ).permitAll()
+                        .requestMatchers("/dashboard").authenticated()
+                        .requestMatchers("/api/trainers/**").hasRole("TRAINER")
+                        .requestMatchers("/api/trainees/**").hasAnyRole("TRAINER", "TRAINEE")
+                        .requestMatchers("/api/courses/**").hasAnyRole("TRAINER", "TRAINEE")
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/dashboard", true)
+                        .permitAll()
+                )
+                .csrf(csrf -> csrf.disable());
+
+        return http.build();
+    }
 
     @Bean
     public CommandLineRunner loadData(TrainerRepository trainerRepo,
@@ -68,34 +105,5 @@ public class AppConfig {
                 traineeRepo.saveAll(List.of(tr1, tr2));
             }
         };
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/swagger-ui.html",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**"
-                        ).permitAll()
-                        .requestMatchers("/dashboard").authenticated()
-                        .requestMatchers("/api/trainers/**").hasRole("TRAINER")
-                        .requestMatchers("/api/trainees/**").hasAnyRole("TRAINER", "TRAINEE")
-                        .requestMatchers("/api/courses/**").hasAnyRole("TRAINER", "TRAINEE")
-                        .anyRequest().authenticated()
-                )
-                .formLogin(form -> form
-                        .defaultSuccessUrl("/dashboard", true)
-                        .permitAll()
-                )
-                .csrf(csrf -> csrf.disable());
-
-        return http.build();
     }
 }
