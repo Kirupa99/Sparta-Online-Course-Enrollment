@@ -1,16 +1,28 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
+<head>
+    <meta charset="UTF-8">
+    <title>Trainer Dashboard</title>
+</head>
+
 <body class="bg-light">
 
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="container py-5">
+<main class="container py-5">
 
+    <!-- Welcome Section -->
+    <div th:replace="~{fragments/welcome :: welcome}"></div>
+
+    <!-- Dashboard Cards -->
     <div class="row justify-content-center g-4">
 
+        <!-- Courses -->
         <div class="col-md-4">
+
             <div class="card text-center shadow-sm h-100">
+
                 <div class="card-body p-4">
 
                     <div class="display-3 mb-3">🎓</div>
@@ -20,7 +32,7 @@
                     </h3>
 
                     <p class="card-text text-muted">
-                        View all the available courses in the academy.
+                        View all available academy courses.
                     </p>
 
                     <a th:href="@{/trainer/view_courses}"
@@ -29,21 +41,26 @@
                     </a>
 
                 </div>
+
             </div>
+
         </div>
 
+        <!-- Trainees -->
         <div class="col-md-4">
+
             <div class="card text-center shadow-sm h-100">
+
                 <div class="card-body p-4">
 
-                    <div class="display-3 mb-3">👤</div>
+                    <div class="display-3 mb-3">👨‍🎓</div>
 
                     <h3 class="card-title fw-bold">
-                        View all Trainee Spartans
+                        View Trainees
                     </h3>
 
                     <p class="card-text text-muted">
-                        View all the Spartans.
+                        View all trainee Spartans.
                     </p>
 
                     <a th:href="@{/trainer/view_trainees}"
@@ -52,58 +69,42 @@
                     </a>
 
                 </div>
+
             </div>
+
         </div>
 
+        <!-- Assign Trainer -->
         <div class="col-md-4">
+
             <div class="card text-center shadow-sm h-100">
+
                 <div class="card-body p-4">
 
-                    <div class="display-3 mb-3">👨‍🏫</div>
+                    <div class="display-3 mb-3">🧑‍🏫</div>
 
                     <h3 class="card-title fw-bold">
-                        Assign Trainer to Trainee
+                        Assign Trainer
                     </h3>
 
                     <p class="card-text text-muted">
-                        Assign a trainee with a trainer.
+                        Assign trainers to trainees.
                     </p>
 
-                    <a th:href="@{/trainer/assign_trainee}"
+                    <a th:href="@{/trainer/assign}"
                        class="btn btn-danger mt-3">
                         Assign Now
                     </a>
 
                 </div>
+
             </div>
-        </div>
 
-        <div class="col-md-4">
-            <div class="card text-center shadow-sm h-100">
-                <div class="card-body p-4">
-
-                    <div class="display-3 mb-3">⚙️</div>
-
-                    <h3 class="card-title fw-bold">
-                        User Profile
-                    </h3>
-
-                    <p class="card-text text-muted">
-                        View and update your trainer profile details.
-                    </p>
-
-                    <a th:href="@{/trainer/profile}"
-                       class="btn btn-danger mt-3">
-                        Access Now
-                    </a>
-
-                </div>
-            </div>
         </div>
 
     </div>
 
-</div>
+</main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 

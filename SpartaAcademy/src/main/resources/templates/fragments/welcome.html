@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<body>
+
+<div th:fragment="welcome">
+
+    <!-- Welcome Section -->
+    <section class="bg-white py-4 px-4 border-bottom mb-5 rounded shadow-sm">
+
+        <div class="d-flex align-items-center gap-4">
+
+            <!-- Profile Image -->
+            <img th:src="@{'/' + ${#strings.toLowerCase(name)} + '.jpg'}"
+                 src="/default.jpg"
+                 alt="Profile Image"
+                 class="rounded-circle"
+                 width="90"
+                 height="90">
+
+            <!-- Welcome Text -->
+            <div>
+
+                <h3 class="fst-italic text-muted mb-1">
+
+                    Hey
+                    <span th:text="${name}">User</span>,
+
+                </h3>
+
+                <p class="text-secondary mb-0">
+                    Welcome to Sparta Course Enrollment
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+</body>
+</html>

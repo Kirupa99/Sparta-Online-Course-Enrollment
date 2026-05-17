@@ -77,5 +77,19 @@ public class TraineeService {
                 .map(traineeMapper::toResponseDTO)
                 .toList();
     }
+
+    public List<TraineeResponseDTO> searchTrainees(String keyword) {
+
+        return traineeRepository
+                .findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrCourse_CourseNameContainingIgnoreCase(
+                        keyword,
+                        keyword,
+                        keyword,
+                        keyword
+                )
+                .stream()
+                .map(traineeMapper::toResponseDTO)
+                .toList();
+    }
 }
 

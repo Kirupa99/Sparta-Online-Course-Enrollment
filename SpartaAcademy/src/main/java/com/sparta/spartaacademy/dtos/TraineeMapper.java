@@ -13,9 +13,12 @@ public interface TraineeMapper {
     Trainee toEntity(TraineeRequestDTO dto);
 
     @Mapping(source = "course.courseId", target = "courseId")
+    @Mapping(source = "course.courseName", target = "courseName")
     TraineeResponseDTO toResponseDTO(Trainee trainee);
 
     @Mapping(target = "traineeId", ignore = true)
     @Mapping(target = "course", ignore = true)
     void updateEntity(TraineeRequestDTO dto, @MappingTarget Trainee trainee);
+
+
 }

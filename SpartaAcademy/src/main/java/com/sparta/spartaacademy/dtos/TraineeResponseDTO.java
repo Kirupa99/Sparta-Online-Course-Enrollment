@@ -28,6 +28,8 @@ public class TraineeResponseDTO {
     @Schema(description = "ID of the course the trainee is enrolled on", example = "2")
     private Integer courseId;
 
+    private String courseName;
+
     public TraineeResponseDTO() {}
 
     public TraineeResponseDTO(Integer traineeId, String firstName, String lastName,
@@ -62,4 +64,8 @@ public class TraineeResponseDTO {
 
     public Integer getCourseId() { return courseId; }
     public void setCourseId(Integer courseId) { this.courseId = courseId; }
+
+
+    public String getCourseName() { return courseName; }
+    public void setCourseName(String courseName) { this.courseName = courseName; }
 }
