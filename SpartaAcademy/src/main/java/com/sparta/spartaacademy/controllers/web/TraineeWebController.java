@@ -3,16 +3,16 @@ package com.sparta.spartaacademy.controllers.web;
 
 import com.sparta.spartaacademy.dtos.CourseResponseDTO;
 import com.sparta.spartaacademy.dtos.TraineeResponseDTO;
+import com.sparta.spartaacademy.repositories.TraineeRepository;
 import com.sparta.spartaacademy.services.CourseService;
 import com.sparta.spartaacademy.services.TraineeService;
-import com.sparta.spartaacademy.services.TrainerService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -22,11 +22,26 @@ public class TraineeWebController
 {
     private final TraineeService traineeservice;
     private final CourseService courseservice;
+    private final TraineeRepository traineeRepository;
 
-    public TraineeWebController(TraineeService traineeservice, CourseService courseservice)
+    public TraineeWebController(TraineeService traineeservice,
+                                CourseService courseservice,
+                                TraineeRepository traineeRepository)
     {
         this.traineeservice = traineeservice;
         this.courseservice = courseservice;
+        this.traineeRepository = traineeRepository;
+    }
+
+    @PreAuthorize("hasRole('TRAINEE')")
+    @GetMapping("/profile")
+    public String viewProfile(Authentication authentication, Model model) {
+        String email = authentication.getName();
+        traineeRepository.findByEmail(email).ifPresent(t -> {
+            TraineeResponseDTO dto = traineeservice.getTraineeById(t.getTraineeId());
+            model.addAttribute("trainee", dto);
+        });
+        return "trainee_profile";
     }
 
     @GetMapping("/courses")
