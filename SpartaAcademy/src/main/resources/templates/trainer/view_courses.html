@@ -59,7 +59,8 @@
         <!-- Back Button -->
         <div class="col-md-4 text-end">
 
-            <a th:href="@{/trainer/courses_create}"
+            <a th:if="${isTrainer}"
+               th:href="@{/trainer/courses_create}"
                class="btn btn-success me-2">
                 ➕📘 Create Course
             </a>
@@ -91,14 +92,15 @@
                         <th>End Date</th>
                         <th>Max Students</th>
                         <th>Trainers</th>
-                        <th>Actions</th>
+                        <th th:if="${isTrainer}">Actions</th>
                     </tr>
                     </thead>
 
                     <tbody>
 
                     <tr th:if="${#lists.isEmpty(courses)}">
-                        <td colspan="7" class="text-center text-muted py-4">
+                        <td th:attr="colspan=${isTrainer} ? 8 : 7"
+                            class="text-center text-muted py-4">
                             No courses found.
                         </td>
                     </tr>
@@ -122,7 +124,7 @@
             </span>
                         </td>
 
-                        <td>
+                        <td th:if="${isTrainer}">
                             <a th:href="@{/trainer/update_course/{id}(id=${course.courseId})}"
                                class="btn btn-warning btn-sm fw-bold">
                                 ✏️ Update Course
