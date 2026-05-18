@@ -90,16 +90,29 @@ public class AppConfig {
 
                 Course c1 = new Course();
                 c1.setCourseName("Java Development");
-                c1.setDescription("Fundamentals and Advanced Java");
+                c1.setDescription("A deep dive into Java from the ground up. Covers core fundamentals including OOP principles, collections, exception handling, and streams, before progressing to advanced topics such as concurrency, design patterns, Spring Boot, and REST API development.");
                 c1.setStartDate(LocalDate.of(2026, 4, 10));
                 c1.setEndDate(LocalDate.of(2026, 8, 10));
                 c1.setMaxStudents(20);
                 c1.setTrainers(List.of(t1, t2));
 
-                courseRepo.save(c1);
+                Course c3 = new Course();
+                c3.setCourseName("Test Automation Engineering");
+                c3.setDescription("Covers the full spectrum of software testing with a focus on automation. Students will learn manual testing fundamentals before progressing to automated testing with JUnit, Mockito, and Selenium. Topics include test planning, BDD with Cucumber, API testing with Postman, and integrating tests into CI/CD pipelines.");
+                c3.setStartDate(LocalDate.of(2026, 6, 1));
+                c3.setEndDate(LocalDate.of(2026, 10, 1));
+                c3.setMaxStudents(18);
+                c3.setTrainers(List.of(t1));
 
-                // reload course so trainees get the persisted version with ID
-                Course savedCourse = courseRepo.findAll().get(0);
+                Course c2 = new Course();
+                c2.setCourseName("DevOps Essentials");
+                c2.setDescription("A comprehensive introduction to DevOps practices including CI/CD pipelines, containerisation with Docker, infrastructure as code, and cloud deployment strategies. Students will gain hands-on experience with industry-standard tooling.");
+                c2.setStartDate(LocalDate.of(2026, 5, 1));
+                c2.setEndDate(LocalDate.of(2026, 9, 1));
+                c2.setMaxStudents(15);
+                c2.setTrainers(List.of(t2));
+
+                courseRepo.saveAll(List.of(c1, c2, c3));
 
                 Trainee tr1 = new Trainee();
                 tr1.setFirstName("Charlie");
@@ -109,6 +122,7 @@ public class AppConfig {
                 tr1.setRole("TRAINEE");
                 tr1.setCity("London");
                 tr1.setEnrolledDate(LocalDate.now());
+                tr1.setCourse(c2);
 
                 Trainee tr2 = new Trainee();
                 tr2.setFirstName("Diana");
@@ -118,7 +132,7 @@ public class AppConfig {
                 tr2.setRole("TRAINEE");
                 tr2.setCity("Manchester");
                 tr2.setEnrolledDate(LocalDate.now());
-                tr2.setCourse(savedCourse);
+                tr2.setCourse(c2);
 
                 traineeRepo.saveAll(List.of(tr1, tr2));
             }

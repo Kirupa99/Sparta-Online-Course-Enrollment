@@ -13,6 +13,7 @@ public class CourseResponseDTO {
     private Integer maxStudents;
     private List<String> trainerNames;
     private Integer traineeCount;
+    private List<String> traineeNames;
 
     public CourseResponseDTO() {}
 
@@ -39,4 +40,7 @@ public class CourseResponseDTO {
 
     public Integer getTraineeCount() { return traineeCount; }
     public void setTraineeCount(Integer traineeCount) { this.traineeCount = traineeCount; }
+
+    public List<String> getTraineeNames() { return traineeNames; }
+    public void setTraineeNames(List<String> traineeNames) { this.traineeNames = traineeNames; }
 }
