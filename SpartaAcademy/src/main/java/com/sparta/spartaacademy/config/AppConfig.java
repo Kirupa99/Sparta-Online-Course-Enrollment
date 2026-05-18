@@ -47,7 +47,7 @@ public class AppConfig {
                 t2.setPhoneNumber("07700000002");
 
                 trainerRepo.saveAll(List.of(t1, t2));
-                List<Trainer> java_trainer = List.of(t2);
+                List<Trainer> java_trainer = List.of(t1,t2);
 
 
                 Course c1 = new Course();
