@@ -30,29 +30,41 @@ public class TrainerWebController {
         this.courseservice = courseservice;
     }
 
-    @GetMapping("/view_trainees")
-    public String viewAllTrainees(@RequestParam(required = false) String keyword, Model model) {
-        List<TraineeResponseDTO> trainees;
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            trainees = traineeservice.searchTrainees(keyword);
-        } else {
-            trainees = traineeservice.getAllTrainees();
+        @GetMapping("/view_trainees")
+        public String viewAllTrainees(
+                @RequestParam(required = false) String keyword,
+                Model model) {
+
+            List<TraineeResponseDTO> trainees;
+
+            if (keyword != null && !keyword.trim().isEmpty()) {
+
+                trainees = traineeservice.searchTrainees(keyword);
+
+            } else {
+
+                trainees = traineeservice.getAllTrainees();
+            }
+
+            model.addAttribute("trainees", trainees);
+            model.addAttribute("keyword", keyword);
+
+            return "trainer/view_trainees";
         }
-        model.addAttribute("trainees", trainees);
-        model.addAttribute("keyword", keyword);
-        return "trainer/view_trainees";
-    }
 
     @GetMapping("/view_courses")
-    public String viewAllCourses(@RequestParam(required = false) String keyword, Model model) {
-        List<CourseResponseDTO> courses;
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            courses = courseservice.searchCoursesByName(keyword);
-        } else {
-            courses = courseservice.getAllCourses();
-        }
+    public String viewAllCourses(@RequestParam(required = false) String keyword,
+                                 Model model) {
+
+        List<CourseResponseDTO> courses =
+                keyword != null && !keyword.trim().isEmpty()
+                        ? courseservice.searchCoursesByName(keyword)
+                        : courseservice.getAllCourses();
+
         model.addAttribute("courses", courses);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("isTrainer", true);
+
         return "trainer/view_courses";
     }
 

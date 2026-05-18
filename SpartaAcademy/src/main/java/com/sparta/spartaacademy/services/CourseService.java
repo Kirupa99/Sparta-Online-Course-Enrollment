@@ -186,4 +186,23 @@ public class CourseService{
 
         return trainer.getCourses().stream().map(this::mapToResponse).collect(Collectors.toList());
     }
+
+    public List<CourseResponseDTO> getCoursesForTrainee(String email)
+    {
+
+        Trainee trainee = traineeRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Trainee not found"));
+
+        Course course = trainee.getCourse();
+
+        if (course == null) {
+            return List.of();
+        }
+
+        CourseResponseDTO dto = mapToResponse(course);
+
+        return List.of(dto);
+    }
+
+
 }

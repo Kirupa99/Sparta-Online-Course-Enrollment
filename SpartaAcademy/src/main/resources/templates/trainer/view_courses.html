@@ -59,7 +59,8 @@
         <!-- Back Button -->
         <div class="col-md-4 text-end">
 
-            <a th:href="@{/course/create_course}"
+            <a th:if="${isTrainer}"
+               th:href="@{/course/create_course}"
                class="btn btn-success me-2">
                 ➕📘 Create Course
             </a>
@@ -89,16 +90,17 @@
                         <th>Description</th>
                         <th>Start Date</th>
                         <th>End Date</th>
-                        <th>Max Students</th>
+                        <th th:if="${isTrainer}">Max Students</th>
                         <th>Trainers</th>
-                        <th>Actions</th>
+                        <th th:if="${isTrainer}">Actions</th>
                     </tr>
                     </thead>
 
                     <tbody>
 
                     <tr th:if="${#lists.isEmpty(courses)}">
-                        <td colspan="7" class="text-center text-muted py-4">
+                        <td th:attr="colspan=${isTrainer} ? 8 : 6"
+                            class="text-center text-muted py-4">
                             No courses found.
                         </td>
                     </tr>
@@ -113,7 +115,9 @@
                         <td th:text="${course.description}"></td>
                         <td th:text="${course.startDate}"></td>
                         <td th:text="${course.endDate}"></td>
-                        <td th:text="${course.maxStudents}"></td>
+                        <td th:if="${isTrainer}"
+                            th:text="${course.maxStudents}">
+                        </td>
 
                         <td>
             <span th:if="${course.trainerNames == null || #lists.isEmpty(course.trainerNames)}">
@@ -126,7 +130,7 @@
             </span>
                         </td>
 
-                        <td>
+                        <td th:if="${isTrainer}">
                             <a th:href="@{/trainer/edit_course/{id}(id=${course.courseId})}"
                                class="btn btn-warning btn-sm fw-bold">
                                 ✏️ Update Course
