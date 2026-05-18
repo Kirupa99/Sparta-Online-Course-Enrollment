@@ -47,6 +47,7 @@ public class AppConfig {
                         .requestMatchers("/api/trainers/**").hasRole("TRAINER")
                         .requestMatchers("/api/trainees/**").hasAnyRole("TRAINER", "TRAINEE")
                         .requestMatchers("/api/courses/**").hasAnyRole("TRAINER", "TRAINEE")
+                        .requestMatchers("/course/**").hasRole("TRAINER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -83,9 +84,9 @@ public class AppConfig {
                 t2.setRole("TRAINER");
                 t2.setPhoneNumber("07700000002");
 
-                trainerRepo.saveAll(List.of(t1, t2));
-                List<Trainer> java_trainer = List.of(t1,t2);
-
+                // save trainers first and get back the persisted versions with IDs
+                t1 = trainerRepo.save(t1);
+                t2 = trainerRepo.save(t2);
 
                 Course c1 = new Course();
                 c1.setCourseName("Java Development");
@@ -93,7 +94,7 @@ public class AppConfig {
                 c1.setStartDate(LocalDate.of(2026, 4, 10));
                 c1.setEndDate(LocalDate.of(2026, 8, 10));
                 c1.setMaxStudents(20);
-                c1.setTrainers(java_trainer);
+                c1.setTrainers(List.of(t1, t2));
 
                 Course c3 = new Course();
                 c3.setCourseName("Test Automation Engineering");
