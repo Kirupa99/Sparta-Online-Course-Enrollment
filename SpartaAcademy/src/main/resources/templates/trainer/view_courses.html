@@ -105,7 +105,11 @@
 
                     <tr th:each="course : ${courses}">
                         <td th:text="${course.courseId}"></td>
-                        <td th:text="${course.courseName}"></td>
+                        <td>
+                            <a th:href="@{/trainer/courses/{id}(id=${course.courseId})}"
+                               th:text="${course.courseName}">
+                            </a>
+                        </td>
                         <td th:text="${course.description}"></td>
                         <td th:text="${course.startDate}"></td>
                         <td th:text="${course.endDate}"></td>
