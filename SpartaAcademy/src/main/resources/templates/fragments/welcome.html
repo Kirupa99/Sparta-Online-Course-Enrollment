@@ -12,11 +12,11 @@
 
             <!-- Profile Image -->
             <img th:src="@{'/' + ${#strings.toLowerCase(name)} + '.jpg'}"
-                 src="/default.jpg"
                  alt="Profile Image"
                  class="rounded-circle"
                  width="90"
-                 height="90">
+                 height="90"
+                 onerror="this.src='/default.png'">
 
             <!-- Welcome Text -->
             <div>

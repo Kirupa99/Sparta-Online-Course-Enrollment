@@ -1,55 +1,169 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Trainer Sign Up</title>
+    <meta charset="UTF-8">
+    <title>Trainer Sign Up - Sparta Academy</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
 </head>
-<body>
 
-<h1>Trainer Sign Up</h1>
+<body class="bg-light">
 
-<div th:if="${error}">
-    <p th:text="${error}" style="color: red;"></p>
+<div class="container min-vh-100 d-flex justify-content-center align-items-center py-5">
+
+    <div class="card shadow-lg border-0 rounded-4 p-5"
+         style="width: 100%; max-width: 520px;">
+
+        <!-- Title -->
+        <div class="text-center mb-4">
+
+            <h1 class="fw-bold text-dark">
+                🧑‍🏫 Trainer Sign Up
+            </h1>
+
+            <p class="text-muted">
+                Create your trainer account at Sparta Academy.
+            </p>
+
+        </div>
+
+        <!-- Error Message -->
+        <div th:if="${error}"
+             class="alert alert-danger text-center">
+
+            <span th:text="${error}"></span>
+
+        </div>
+
+        <!-- Signup Form -->
+        <form action="/signup/trainer"
+              method="post">
+
+            <!-- First Name -->
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    First Name
+                </label>
+
+                <input type="text"
+                       name="firstName"
+                       class="form-control form-control-lg"
+                       placeholder="Enter your first name"
+                       required>
+
+            </div>
+
+            <!-- Last Name -->
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Last Name
+                </label>
+
+                <input type="text"
+                       name="lastName"
+                       class="form-control form-control-lg"
+                       placeholder="Enter your last name"
+                       required>
+
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Email
+                </label>
+
+                <input type="email"
+                       name="email"
+                       class="form-control form-control-lg"
+                       placeholder="Enter your email"
+                       required>
+
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Password
+                </label>
+
+                <input type="password"
+                       name="password"
+                       class="form-control form-control-lg"
+                       placeholder="Create a password"
+                       required>
+
+            </div>
+
+            <!-- Phone Number -->
+            <div class="mb-4">
+
+                <label class="form-label fw-semibold">
+                    Phone Number
+                </label>
+
+                <input type="text"
+                       name="phoneNumber"
+                       class="form-control form-control-lg"
+                       placeholder="Enter your phone number (optional)">
+
+            </div>
+
+            <!-- Sign Up Button -->
+            <div class="d-grid mb-4">
+
+                <button type="submit"
+                        class="btn btn-danger btn-lg fw-bold rounded-3">
+
+                    Create Account
+
+                </button>
+
+            </div>
+
+        </form>
+
+        <!-- Login Redirect -->
+        <div class="text-center mb-3">
+
+            <span class="text-muted">
+                Already have an account?
+            </span>
+
+            <a href="/login"
+               class="text-decoration-none fw-semibold text-danger">
+                Log in here
+            </a>
+
+        </div>
+
+        <!-- Trainee Signup Redirect -->
+        <div class="text-center">
+
+            <span class="text-muted">
+                Want to register as a trainee?
+            </span>
+
+            <a href="/signup/trainee"
+               class="text-decoration-none fw-semibold text-dark">
+                Trainee Sign Up
+            </a>
+
+        </div>
+
+    </div>
+
 </div>
 
-<form action="/signup/trainer" method="post">
-
-    <div>
-        <label>First Name:</label><br>
-        <input type="text" name="firstName" required/>
-    </div>
-    <br>
-
-    <div>
-        <label>Last Name:</label><br>
-        <input type="text" name="lastName" required/>
-    </div>
-    <br>
-
-    <div>
-        <label>Email:</label><br>
-        <input type="email" name="email" required/>
-    </div>
-    <br>
-
-    <div>
-        <label>Password:</label><br>
-        <input type="password" name="password" required/>
-    </div>
-    <br>
-
-    <div>
-        <label>Phone Number (optional):</label><br>
-        <input type="text" name="phoneNumber"/>
-    </div>
-    <br>
-
-    <button type="submit">Sign Up</button>
-
-</form>
-
-<br>
-<p>Already have an account? <a href="/login">Log in here</a></p>
-<p>Sign up as a trainee instead? <a href="/signup/trainee">Trainee Sign Up</a></p>
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
