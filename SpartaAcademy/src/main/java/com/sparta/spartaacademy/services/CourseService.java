@@ -204,5 +204,14 @@ public class CourseService{
         return List.of(dto);
     }
 
+    public List<CourseResponseDTO> getCoursesForTrainer(String email) {
 
-}
+            System.out.println("Logged in trainer email: " + email);
+            List<Course> courses = courseRepository.findByTrainers_Email(email);
+            System.out.println("Courses found: " + courses.size());
+            return courses.stream()
+                    .map(this::mapToResponse)
+                    .toList();
+        }
+    }
+

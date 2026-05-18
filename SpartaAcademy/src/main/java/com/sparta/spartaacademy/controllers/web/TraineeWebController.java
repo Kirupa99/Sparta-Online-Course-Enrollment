@@ -39,6 +39,7 @@ public class TraineeWebController
 
         model.addAttribute("courses", courses);
         model.addAttribute("isTrainer", false);
+        model.addAttribute("isMyCourses", true);
 
         return "trainer/view_courses";
     }
