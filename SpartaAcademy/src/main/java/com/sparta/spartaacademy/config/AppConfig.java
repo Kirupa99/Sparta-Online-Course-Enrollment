@@ -83,19 +83,22 @@ public class AppConfig {
                 t2.setRole("TRAINER");
                 t2.setPhoneNumber("07700000002");
 
-                trainerRepo.saveAll(List.of(t1, t2));
-                List<Trainer> java_trainer = List.of(t1,t2);
-
+                // save trainers first and get back the persisted versions with IDs
+                t1 = trainerRepo.save(t1);
+                t2 = trainerRepo.save(t2);
 
                 Course c1 = new Course();
                 c1.setCourseName("Java Development");
-                c1.setDescription("Fundamentals and Advance Java");
+                c1.setDescription("Fundamentals and Advanced Java");
                 c1.setStartDate(LocalDate.of(2026, 4, 10));
                 c1.setEndDate(LocalDate.of(2026, 8, 10));
                 c1.setMaxStudents(20);
-                c1.setTrainers(java_trainer);
+                c1.setTrainers(List.of(t1, t2));
 
-                courseRepo.saveAll(List.of(c1));
+                courseRepo.save(c1);
+
+                // reload course so trainees get the persisted version with ID
+                Course savedCourse = courseRepo.findAll().get(0);
 
                 Trainee tr1 = new Trainee();
                 tr1.setFirstName("Charlie");
@@ -114,7 +117,7 @@ public class AppConfig {
                 tr2.setRole("TRAINEE");
                 tr2.setCity("Manchester");
                 tr2.setEnrolledDate(LocalDate.now());
-                tr2.setCourse(c1);
+                tr2.setCourse(savedCourse);
 
                 traineeRepo.saveAll(List.of(tr1, tr2));
             }
