@@ -245,5 +245,17 @@ public class CourseService{
                     .map(this::mapToResponse)
                     .toList();
         }
+
+    public List<CourseResponseDTO> searchCoursesForTrainer(String email,
+                                                           String keyword) {
+
+        return getCoursesForTrainer(email)
+                .stream()
+                .filter(course ->
+                        course.getCourseName()
+                                .toLowerCase()
+                                .contains(keyword.toLowerCase()))
+                .toList();
+    }
     }
 

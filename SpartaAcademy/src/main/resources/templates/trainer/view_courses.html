@@ -19,37 +19,28 @@
 
     <div class="container py-5">
 
-        <!-- Page Title -->
         <div class="text-center mb-5">
 
-            <!-- Trainer: All Courses -->
-            <div th:if="${isTrainer and !isMyCourses}">
-                <h1 class="fw-bold">
-                    All Courses
-                </h1>
-                <p class="text-muted">
-                    View all available courses in the academy.
-                </p>
+            <div th:if="${isTrainer and not isMyCourses}">
+                <h1 class="fw-bold">All Courses</h1>
+                <p class="text-muted">View all available courses in the academy.</p>
             </div>
 
-            <!-- Trainer: My Courses -->
             <div th:if="${isMyCourses}">
-                <h1 class="fw-bold">
-                    My Courses
-                </h1>
-                <p class="text-muted">
-                    View courses assigned to you.
-                </p>
+                <h1 class="fw-bold">My Courses</h1>
+                <p class="text-muted">View your courses.</p>
             </div>
-
 
         </div>
 
-        <!-- Search + Back Button -->
         <div class="row mb-4 align-items-center">
 
             <div class="col-md-8">
-                <form th:action="@{/trainer/view_courses}" method="get">
+
+                <form th:if="${isTrainer and not isMyCourses}"
+                      th:action="@{/trainer/view_courses}"
+                      method="get">
+
                     <div class="input-group shadow-sm">
                         <input type="text"
                                name="keyword"
@@ -61,11 +52,50 @@
                             Search
                         </button>
                     </div>
+
                 </form>
+
+                <form th:if="${isTrainer and isMyCourses}"
+                      th:action="@{/trainer/mycourses}"
+                      method="get">
+
+                    <div class="input-group shadow-sm">
+                        <input type="text"
+                               name="keyword"
+                               class="form-control"
+                               placeholder="Search your courses..."
+                               th:value="${keyword}">
+
+                        <button class="btn btn-danger" type="submit">
+                            Search
+                        </button>
+                    </div>
+
+                </form>
+
+                <form th:unless="${isTrainer}"
+                      th:action="@{/trainees/courses}"
+                      method="get">
+
+                    <div class="input-group shadow-sm">
+                        <input type="text"
+                               name="keyword"
+                               class="form-control"
+                               placeholder="Search your enrolled courses..."
+                               th:value="${keyword}">
+
+                        <button class="btn btn-danger" type="submit">
+                            Search
+                        </button>
+                    </div>
+
+                </form>
+
             </div>
 
             <div class="col-md-4 text-end">
-                <a th:if="${isTrainer and !isMyCourses}"
+
+                <a th:if="${isTrainer and not isMyCourses}"
                    th:href="@{/course/create_course}"
                    class="btn btn-success me-2">
                     ➕📘 Create Course
@@ -75,11 +105,11 @@
                    class="btn btn-dark">
                     ← Back to Dashboard
                 </a>
+
             </div>
 
         </div>
 
-        <!-- Table Card -->
         <div class="card shadow-sm border-0">
             <div class="card-body">
                 <div class="table-responsive">
@@ -95,7 +125,7 @@
                             <th>End Date</th>
                             <th th:if="${isTrainer}">Max Students</th>
                             <th>Trainers</th>
-                            <th th:if="${isTrainer and !isMyCourses}">Actions</th>
+                            <th th:if="${isTrainer and not isMyCourses}">Actions</th>
                         </tr>
                         </thead>
 
@@ -112,8 +142,13 @@
                             <td th:text="${course.courseId}"></td>
 
                             <td>
-                                <a th:if="${isTrainer}"
+                                <a th:if="${isTrainer and not isMyCourses}"
                                    th:href="@{/trainer/courses/{id}(id=${course.courseId})}"
+                                   th:text="${course.courseName}">
+                                </a>
+
+                                <a th:if="${isTrainer and isMyCourses}"
+                                   th:href="@{/trainer/mycourses/{id}(id=${course.courseId})}"
                                    th:text="${course.courseName}">
                                 </a>
 
@@ -142,13 +177,14 @@
                                 </span>
                             </td>
 
-                            <td th:if="${isTrainer and !isMyCourses}">
+                            <td th:if="${isTrainer and not isMyCourses}">
                                 <a th:href="@{/trainer/edit_course/{id}(id=${course.courseId})}"
                                    class="btn btn-warning btn-sm fw-bold">
                                     ✏️ Update Course
                                 </a>
                             </td>
                         </tr>
+
                         </tbody>
                     </table>
 
