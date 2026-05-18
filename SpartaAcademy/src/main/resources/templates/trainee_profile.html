@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile</title>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div style="padding: 40px;">
+
+    <h1>My Profile</h1>
+
+    <hr>
+
+    <p><strong>Name:</strong> <span th:text="${trainee.firstName + ' ' + trainee.lastName}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${trainee.email}"></span></p>
+    <p><strong>City:</strong>
+        <span th:if="${trainee.city != null}" th:text="${trainee.city}"></span>
+        <span th:unless="${trainee.city != null}">Not provided</span>
+    </p>
+    <p><strong>Enrolled Date:</strong> <span th:text="${trainee.enrolledDate}"></span></p>
+
+    <hr>
+
+    <h3>Enrolled Course</h3>
+    <p th:if="${trainee.courseName != null}" th:text="${trainee.courseName}"></p>
+    <p th:unless="${trainee.courseName != null}">Not enrolled in a course.</p>
+
+    <hr>
+
+    <a th:href="@{/dashboard}">← Back to Dashboard</a>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
