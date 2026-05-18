@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class RootController
-{
+public class RootController {
+
     @GetMapping("/")
-    public ResponseEntity<Void> redirectToSwaggerUK(){
+    public ResponseEntity<Void> redirectToSwagger() {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Location", "/swagger-ui/index.html");
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
