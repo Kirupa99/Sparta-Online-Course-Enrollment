@@ -1,5 +1,6 @@
 package com.sparta.spartaacademy.controllers.web;
 
+import com.sparta.spartaacademy.dtos.CourseRequestDTO;
 import com.sparta.spartaacademy.dtos.CourseResponseDTO;
 import com.sparta.spartaacademy.dtos.TraineeResponseDTO;
 import com.sparta.spartaacademy.services.CourseService;
@@ -8,21 +9,22 @@ import com.sparta.spartaacademy.services.TrainerService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Controller
 @RequestMapping("/trainer")
-public class TrainerWebController
-{
+public class TrainerWebController {
+
     private final TrainerService trainerservice;
     private final TraineeService traineeservice;
     private final CourseService courseservice;
 
-    public TrainerWebController(TrainerService trainerservice, TraineeService traineeservice, CourseService courseservice)
-    {
+    public TrainerWebController(TrainerService trainerservice, TraineeService traineeservice, CourseService courseservice) {
         this.trainerservice = trainerservice;
         this.traineeservice = traineeservice;
         this.courseservice = courseservice;
@@ -66,5 +68,46 @@ public class TrainerWebController
         return "trainer/view_courses";
     }
 
+    @GetMapping("/courses/{id}")
+    public String viewCourseDetail(@PathVariable Integer id, Model model) {
+        CourseResponseDTO course = courseservice.getCourseById(id);
+        model.addAttribute("course", course);
+        return "trainer/view_course_detail";
     }
 
+    @GetMapping("/edit_course/{id}")
+    public String showEditCourseForm(@PathVariable Integer id, Model model) {
+        CourseResponseDTO course = courseservice.getCourseById(id);
+        model.addAttribute("course", course);
+        model.addAttribute("trainers", trainerservice.getAllTrainers());
+        return "trainer/edit_course";
+    }
+
+    @PostMapping("/edit_course/{id}")
+    public String updateCourse(@PathVariable Integer id,
+                               @RequestParam String courseName,
+                               @RequestParam(required = false) String description,
+                               @RequestParam String startDate,
+                               @RequestParam String endDate,
+                               @RequestParam(required = false) Integer maxStudents,
+                               @RequestParam(required = false) List<Integer> trainerIds,
+                               Model model) {
+        try {
+            CourseRequestDTO requestDTO = new CourseRequestDTO();
+            requestDTO.setCourseName(courseName);
+            requestDTO.setDescription(description);
+            requestDTO.setStartDate(java.time.LocalDate.parse(startDate));
+            requestDTO.setEndDate(java.time.LocalDate.parse(endDate));
+            requestDTO.setMaxStudents(maxStudents);
+            requestDTO.setTrainerIds(trainerIds);
+            courseservice.updateCourse(id, requestDTO);
+            return "redirect:/trainer/view_courses";
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to update course: " + e.getMessage());
+            CourseResponseDTO course = courseservice.getCourseById(id);
+            model.addAttribute("course", course);
+            model.addAttribute("trainers", trainerservice.getAllTrainers());
+            return "trainer/edit_course";
+        }
+    }
+}

@@ -76,8 +76,11 @@ public class CourseService{
 
         if(course.getTrainees() != null){
             responseDTO.setTraineeCount(course.getTrainees().size());
+            responseDTO.setTraineeNames(course.getTrainees()
+                    .stream().map(trainee -> trainee.getFirstName() + " " + trainee.getLastName()).toList());
         }else{
             responseDTO.setTraineeCount(0);
+            responseDTO.setTraineeNames(List.of());
         }
 
         return responseDTO;
