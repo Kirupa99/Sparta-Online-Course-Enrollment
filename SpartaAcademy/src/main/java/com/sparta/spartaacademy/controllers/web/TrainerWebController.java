@@ -52,15 +52,14 @@ public class TrainerWebController {
         return "trainer/view_courses";
     }
 
-    // show the edit form pre-filled with existing course data
     @GetMapping("/edit_course/{id}")
     public String showEditCourseForm(@PathVariable Integer id, Model model) {
         CourseResponseDTO course = courseservice.getCourseById(id);
         model.addAttribute("course", course);
+        model.addAttribute("trainers", trainerservice.getAllTrainers());
         return "trainer/edit_course";
     }
 
-    // handle the form submission and update the course
     @PostMapping("/edit_course/{id}")
     public String updateCourse(@PathVariable Integer id,
                                @RequestParam String courseName,
@@ -68,6 +67,7 @@ public class TrainerWebController {
                                @RequestParam String startDate,
                                @RequestParam String endDate,
                                @RequestParam(required = false) Integer maxStudents,
+                               @RequestParam(required = false) List<Integer> trainerIds,
                                Model model) {
         try {
             CourseRequestDTO requestDTO = new CourseRequestDTO();
@@ -76,12 +76,14 @@ public class TrainerWebController {
             requestDTO.setStartDate(java.time.LocalDate.parse(startDate));
             requestDTO.setEndDate(java.time.LocalDate.parse(endDate));
             requestDTO.setMaxStudents(maxStudents);
+            requestDTO.setTrainerIds(trainerIds);
             courseservice.updateCourse(id, requestDTO);
             return "redirect:/trainer/view_courses";
         } catch (Exception e) {
             model.addAttribute("error", "Failed to update course: " + e.getMessage());
             CourseResponseDTO course = courseservice.getCourseById(id);
             model.addAttribute("course", course);
+            model.addAttribute("trainers", trainerservice.getAllTrainers());
             return "trainer/edit_course";
         }
     }
