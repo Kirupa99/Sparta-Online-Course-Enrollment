@@ -51,25 +51,20 @@ public class TrainerWebController
         }
 
     @GetMapping("/view_courses")
-    public String viewAllCourses(
-            @RequestParam(required = false) String keyword,
-            Model model) {
+    public String viewAllCourses(@RequestParam(required = false) String keyword,
+                                 Model model) {
 
-        List<CourseResponseDTO> courses;
-
-        if (keyword != null && !keyword.trim().isEmpty()) {
-
-            courses = courseservice.searchCoursesByName(keyword);
-
-        } else {
-
-            courses = courseservice.getAllCourses();
-        }
+        List<CourseResponseDTO> courses =
+                keyword != null && !keyword.trim().isEmpty()
+                        ? courseservice.searchCoursesByName(keyword)
+                        : courseservice.getAllCourses();
 
         model.addAttribute("courses", courses);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("isTrainer", true);
 
         return "trainer/view_courses";
     }
+
     }
 
