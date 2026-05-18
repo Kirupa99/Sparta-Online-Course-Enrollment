@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${course.courseName}">Course Detail</title>
+</head>
+
+<body>
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div style="padding: 40px;">
+
+    <h1 th:text="${course.courseName}"></h1>
+    <p th:text="${course.description}"></p>
+    <p><strong>Start Date:</strong> <span th:text="${course.startDate}"></span></p>
+    <p><strong>End Date:</strong> <span th:text="${course.endDate}"></span></p>
+    <p><strong>Max Students:</strong> <span th:text="${course.maxStudents}"></span></p>
+
+    <hr>
+
+    <h3>Trainers</h3>
+    <p th:if="${#lists.isEmpty(course.trainerNames)}">No trainers assigned.</p>
+    <ul th:unless="${#lists.isEmpty(course.trainerNames)}">
+        <li th:each="name : ${course.trainerNames}" th:text="${name}"></li>
+    </ul>
+
+    <hr>
+
+    <h3>Enrolled Trainees</h3>
+    <p th:if="${#lists.isEmpty(course.traineeNames)}">No trainees enrolled.</p>
+    <ul th:unless="${#lists.isEmpty(course.traineeNames)}">
+        <li th:each="name : ${course.traineeNames}" th:text="${name}"></li>
+    </ul>
+
+    <hr>
+
+    <a th:href="@{/trainer/view_courses}">← Back to Courses</a>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
