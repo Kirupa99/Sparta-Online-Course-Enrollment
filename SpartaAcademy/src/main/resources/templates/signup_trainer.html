@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Trainer Sign Up</title>
+</head>
+<body>
+
+<h1>Trainer Sign Up</h1>
+
+<div th:if="${error}">
+    <p th:text="${error}" style="color: red;"></p>
+</div>
+
+<form action="/signup/trainer" method="post">
+
+    <div>
+        <label>First Name:</label><br>
+        <input type="text" name="firstName" required/>
+    </div>
+    <br>
+
+    <div>
+        <label>Last Name:</label><br>
+        <input type="text" name="lastName" required/>
+    </div>
+    <br>
+
+    <div>
+        <label>Email:</label><br>
+        <input type="email" name="email" required/>
+    </div>
+    <br>
+
+    <div>
+        <label>Password:</label><br>
+        <input type="password" name="password" required/>
+    </div>
+    <br>
+
+    <div>
+        <label>Phone Number (optional):</label><br>
+        <input type="text" name="phoneNumber"/>
+    </div>
+    <br>
+
+    <button type="submit">Sign Up</button>
+
+</form>
+
+<br>
+<p>Already have an account? <a href="/login">Log in here</a></p>
+<p>Sign up as a trainee instead? <a href="/signup/trainee">Trainee Sign Up</a></p>
+
+</body>
+</html>
