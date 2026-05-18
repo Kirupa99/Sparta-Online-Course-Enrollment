@@ -3,9 +3,13 @@ package com.sparta.spartaacademy.controllers.web;
 import com.sparta.spartaacademy.dtos.CourseRequestDTO;
 import com.sparta.spartaacademy.dtos.CourseResponseDTO;
 import com.sparta.spartaacademy.dtos.TraineeResponseDTO;
+import com.sparta.spartaacademy.dtos.TrainerProfileUpdateDTO;
+import com.sparta.spartaacademy.entities.Trainer;
 import com.sparta.spartaacademy.services.CourseService;
 import com.sparta.spartaacademy.services.TraineeService;
 import com.sparta.spartaacademy.services.TrainerService;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -98,4 +103,35 @@ public class TrainerWebController {
             return "trainer/edit_course";
         }
     }
+
+
+    @GetMapping("/profile")
+    public String showProfile(Authentication authentication, Model model) {
+        String email = authentication.getName();
+        Trainer trainer = trainerservice.findByEmail(email);
+        model.addAttribute("trainer", trainer);
+        return "trainer/trainer_profile";
+    }
+
+
+
+    @PostMapping("/profile")
+    public String updateProfile(
+            @ModelAttribute TrainerProfileUpdateDTO dto,
+            Authentication authentication,
+            Model model) {
+
+        try {
+            Trainer trainer = trainerservice.updateProfile(authentication.getName(), dto);
+            model.addAttribute("trainer", trainer);
+            model.addAttribute("success", "Profile updated successfully!");
+            return "trainer/trainer_profile";
+
+        } catch (ResponseStatusException e) {
+            model.addAttribute("error", e.getReason());
+            return "trainer/trainer_profile";
+        }
+    }
+
+
 }
