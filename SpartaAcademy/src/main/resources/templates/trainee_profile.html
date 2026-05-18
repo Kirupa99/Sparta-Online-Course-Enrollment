@@ -15,39 +15,55 @@
 
     <h1 class="fw-bold mb-4">My Profile</h1>
 
-    <div class="mb-3">
-        <label class="form-label">First Name</label>
-        <input type="text" class="form-control" th:value="${trainee.firstName}" disabled/>
+    <div th:if="${success}">
+        <p th:text="${success}" style="color: green;"></p>
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Last Name</label>
-        <input type="text" class="form-control" th:value="${trainee.lastName}" disabled/>
+    <div th:if="${error}">
+        <p th:text="${error}" style="color: red;"></p>
     </div>
 
-    <div class="mb-3">
-        <label class="form-label">Email</label>
-        <input type="text" class="form-control" th:value="${trainee.email}" disabled/>
-    </div>
+    <form th:action="@{/trainees/profile}" method="post">
 
-    <div class="mb-3">
-        <label class="form-label">City</label>
-        <input type="text" class="form-control"
-               th:value="${trainee.city != null} ? ${trainee.city} : 'Not provided'" disabled/>
-    </div>
+        <div class="mb-3">
+            <label class="form-label">First Name</label>
+            <input type="text" name="firstName" class="form-control"
+                   th:value="${trainee.firstName}" required/>
+        </div>
 
-    <div class="mb-3">
-        <label class="form-label">Enrolled Date</label>
-        <input type="text" class="form-control" th:value="${trainee.enrolledDate}" disabled/>
-    </div>
+        <div class="mb-3">
+            <label class="form-label">Last Name</label>
+            <input type="text" name="lastName" class="form-control"
+                   th:value="${trainee.lastName}" required/>
+        </div>
 
-    <div class="mb-3">
-        <label class="form-label">Enrolled Course</label>
-        <input type="text" class="form-control"
-               th:value="${trainee.courseName != null} ? ${trainee.courseName} : 'Not enrolled in a course'" disabled/>
-    </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control"
+                   th:value="${trainee.email}" required/>
+        </div>
 
-    <a th:href="@{/dashboard}" class="btn btn-dark">← Back to Dashboard</a>
+        <div class="mb-3">
+            <label class="form-label">City</label>
+            <input type="text" name="city" class="form-control"
+                   th:value="${trainee.city}"/>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Enrolled Course</label>
+            <input type="text" class="form-control"
+                   th:value="${trainee.courseName != null} ? ${trainee.courseName} : 'Not enrolled in a course'" disabled/>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">New Password (leave blank to keep current)</label>
+            <input type="password" name="password" class="form-control"/>
+        </div>
+
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a th:href="@{/dashboard}" class="btn btn-dark ms-2">Cancel</a>
+
+    </form>
 
 </div>
 
