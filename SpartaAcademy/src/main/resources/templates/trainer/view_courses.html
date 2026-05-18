@@ -108,7 +108,13 @@
                     <tr th:each="course : ${courses}">
                         <td th:text="${course.courseId}"></td>
                         <td>
-                            <a th:href="@{/trainer/courses/{id}(id=${course.courseId})}"
+                            <a th:if="${isTrainer}"
+                                th:href="@{/trainer/courses/{id}(id=${course.courseId})}"
+                                th:text="${course.courseName}">
+                        </a>
+
+                            <a th:unless="${isTrainer}"
+                               th:href="@{/trainees/courses/{id}(id=${course.courseId})}"
                                th:text="${course.courseName}">
                             </a>
                         </td>

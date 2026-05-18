@@ -36,7 +36,17 @@
 
     <hr>
 
-    <a th:href="@{/trainer/view_courses}">← Back to Courses</a>
+    <a th:if="${isTrainer}"
+       th:href="@{/trainer/view_courses}"
+       class="btn btn-dark">
+        ← Back to Courses
+    </a>
+
+    <a th:unless="${isTrainer}"
+       th:href="@{/trainees/courses}"
+       class="btn btn-dark">
+        ← Back to My Courses
+    </a>
 
 </div>
 

@@ -72,6 +72,7 @@ public class TrainerWebController {
     public String viewCourseDetail(@PathVariable Integer id, Model model) {
         CourseResponseDTO course = courseservice.getCourseById(id);
         model.addAttribute("course", course);
+        model.addAttribute("isTrainer", true);
         return "trainer/view_course_detail";
     }
 
