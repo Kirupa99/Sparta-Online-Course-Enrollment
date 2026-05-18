@@ -47,6 +47,7 @@ public class AppConfig {
                         .requestMatchers("/api/trainers/**").hasRole("TRAINER")
                         .requestMatchers("/api/trainees/**").hasAnyRole("TRAINER", "TRAINEE")
                         .requestMatchers("/api/courses/**").hasAnyRole("TRAINER", "TRAINEE")
+                        .requestMatchers("/course/**").hasRole("TRAINER")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
