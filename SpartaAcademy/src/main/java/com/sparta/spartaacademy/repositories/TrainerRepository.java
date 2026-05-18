@@ -14,4 +14,6 @@ public interface TrainerRepository extends JpaRepository<Trainer, Integer> {
     boolean existsByEmail(String email);
 
     Optional<Trainer> findByEmail(String email);
+
+
 }

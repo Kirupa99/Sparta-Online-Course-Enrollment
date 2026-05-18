@@ -1,5 +1,6 @@
 package com.sparta.spartaacademy.config;
 
+import com.sparta.spartaacademy.entities.Course;
 import com.sparta.spartaacademy.entities.Trainee;
 import com.sparta.spartaacademy.entities.Trainer;
 import com.sparta.spartaacademy.repositories.CourseRepository;
@@ -83,6 +84,18 @@ public class AppConfig {
                 t2.setPhoneNumber("07700000002");
 
                 trainerRepo.saveAll(List.of(t1, t2));
+                List<Trainer> java_trainer = List.of(t1,t2);
+
+
+                Course c1 = new Course();
+                c1.setCourseName("Java Development");
+                c1.setDescription("Fundamentals and Advance Java");
+                c1.setStartDate(LocalDate.of(2026, 4, 10));
+                c1.setEndDate(LocalDate.of(2026, 8, 10));
+                c1.setMaxStudents(20);
+                c1.setTrainers(java_trainer);
+
+                courseRepo.saveAll(List.of(c1));
 
                 Trainee tr1 = new Trainee();
                 tr1.setFirstName("Charlie");
@@ -101,6 +114,7 @@ public class AppConfig {
                 tr2.setRole("TRAINEE");
                 tr2.setCity("Manchester");
                 tr2.setEnrolledDate(LocalDate.now());
+                tr2.setCourse(c1);
 
                 traineeRepo.saveAll(List.of(tr1, tr2));
             }

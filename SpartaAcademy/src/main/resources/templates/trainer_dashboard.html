@@ -1,73 +1,111 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
-<body class="bg-white">
+<head>
+    <meta charset="UTF-8">
+    <title>Trainer Dashboard</title>
+</head>
 
-<!-- Header -->
+<body class="bg-light">
+
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="container-fluid border border-dark border-2 min-vh-100 mt-3 w-95">
+<main class="container py-5">
 
-    <div class="container py-5">
+    <!-- Welcome Section -->
+    <div th:replace="~{fragments/welcome :: welcome}"></div>
 
-        <!-- Greeting -->
-        <div class="mb-5">
+    <!-- Dashboard Cards -->
+    <div class="row justify-content-center g-4">
 
-            <h2 class="fw-bold">
-                Hi,
-                <span th:text="${username}"></span>
-            </h2>
+        <!-- Courses -->
+        <div class="col-md-4">
 
-        </div>
+            <div class="card text-center shadow-sm h-100">
 
-        <!-- Heading -->
-        <div class="text-center mb-5">
+                <div class="card-body p-4">
 
-            <h1 class="fw-bold">
-                Welcome to the Sparta Course Enrollment
-            </h1>
+                    <div class="display-3 mb-3">🎓</div>
 
-        </div>
+                    <h3 class="card-title fw-bold">
+                        Available Courses
+                    </h3>
 
-        <!-- Main Buttons -->
-        <div class="d-flex justify-content-center gap-5 flex-wrap mb-5">
+                    <p class="card-text text-muted">
+                        View all available academy courses.
+                    </p>
 
-            <a th:href="@{/courses}">
-                <button class="btn btn-dark rounded-0 px-4 py-3 fw-bold">
-                    View All Courses
-                </button>
-            </a>
+                    <a th:href="@{/trainer/view_courses}"
+                       class="btn btn-danger mt-3">
+                        View Now
+                    </a>
 
-            <a th:href="@{/trainees}">
-                <button class="btn btn-dark rounded-0 px-4 py-3 fw-bold">
-                    View All Trainees
-                </button>
-            </a>
+                </div>
 
-            <a th:href="@{/assign-trainer}">
-                <button class="btn btn-dark rounded-0 px-4 py-3 fw-bold">
-                    Assign Trainer to Trainee
-                </button>
-            </a>
+            </div>
 
         </div>
 
-        <!-- Bottom Button -->
-        <div class="text-center mt-5">
+        <!-- Trainees -->
+        <div class="col-md-4">
 
-            <a th:href="@{/profile/update}">
-                <button class="btn btn-dark rounded-0 px-5 py-3 fw-bold">
-                    Update User Profile
-                </button>
-            </a>
+            <div class="card text-center shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="display-3 mb-3">👨‍🎓</div>
+
+                    <h3 class="card-title fw-bold">
+                        View Trainees
+                    </h3>
+
+                    <p class="card-text text-muted">
+                        View all trainee Spartans.
+                    </p>
+
+                    <a th:href="@{/trainer/view_trainees}"
+                       class="btn btn-danger mt-3">
+                        View Now
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Assign Trainer -->
+        <div class="col-md-4">
+
+            <div class="card text-center shadow-sm h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="display-3 mb-3">🧑‍🏫</div>
+
+                    <h3 class="card-title fw-bold">
+                        Assign Trainer
+                    </h3>
+
+                    <p class="card-text text-muted">
+                        Assign trainers to trainees.
+                    </p>
+
+                    <a th:href="@{/trainer/assign}"
+                       class="btn btn-danger mt-3">
+                        Assign Now
+                    </a>
+
+                </div>
+
+            </div>
 
         </div>
 
     </div>
 
-</div>
+</main>
 
-<!-- Footer -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>

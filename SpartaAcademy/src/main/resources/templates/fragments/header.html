@@ -10,28 +10,79 @@
           rel="stylesheet">
 
     <!-- Navbar -->
-    <div class="container-fluid border border-dark border-2 mt-2">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
 
-        <div class="row bg-info-subtle py-3 px-4">
+        <div class="container">
 
-            <div class="col d-flex justify-content-between align-items-center">
+            <!-- Brand -->
+            <a class="navbar-brand fw-bold"
+               th:href="@{/dashboard}">
+                Sparta Academy
+            </a>
 
-                <form th:action="@{/logout}" method="post">
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav">
 
-                    <button type="submit"
-                            class="btn btn-dark rounded-0 px-5 py-2 fw-bold">
-                        Logout
-                    </button>
+                <span class="navbar-toggler-icon"></span>
 
-                </form>
+            </button>
+
+            <!-- Navbar Items -->
+            <div class="collapse navbar-collapse"
+                 id="navbarNav">
+
+                <ul class="navbar-nav ms-auto align-items-center gap-2">
+
+                    <!-- Dashboard -->
+                    <li class="nav-item">
+
+                        <a class="nav-link active fw-semibold"
+                           th:href="@{/dashboard}">
+                            Dashboard
+                        </a>
+
+                    </li>
+
+                    <!-- Profile -->
+                    <li class="nav-item">
+
+                        <a class="nav-link fw-semibold"
+                           th:href="@{/profile}">
+                            Profile
+                        </a>
+
+                    </li>
+
+                    <!-- Logout -->
+                    <li class="nav-item ms-2">
+
+                        <form th:action="@{/logout}"
+                              method="post">
+
+                            <button type="submit"
+                                    class="btn btn-danger btn-sm px-3">
+                                Logout
+                            </button>
+
+                        </form>
+
+                    </li>
+
+                </ul>
 
             </div>
 
         </div>
 
-    </div>
+    </nav>
 
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

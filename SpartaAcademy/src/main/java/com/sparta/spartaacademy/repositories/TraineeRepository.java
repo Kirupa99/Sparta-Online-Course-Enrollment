@@ -20,4 +20,11 @@ public interface TraineeRepository extends JpaRepository<Trainee, Integer> {
     Optional<Trainee> findByEmail(String email);
 
     Integer course(Course course);
+
+    List<Trainee> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrCourse_CourseNameContainingIgnoreCase(
+            String firstName,
+            String lastName,
+            String email,
+            String courseName
+    );
 }
