@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Assign Trainee to Course</title>
+</head>
+<body class="bg-light">
+
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div class="container py-5">
+
+    <h1 class="fw-bold mb-4">Assign Trainee to Course</h1>
+
+    <!-- Feedback messages -->
+    <div th:if="${param.success == 'enrolled'}" class="alert alert-success">
+        Trainee enrolled successfully.
+    </div>
+    <div th:if="${param.success == 'removed'}" class="alert alert-success">
+        Trainee removed successfully.
+    </div>
+    <div th:if="${param.error}" class="alert alert-danger" th:text="${param.error}"></div>
+
+    <div class="row g-4">
+
+        <!-- Section 1: Enrol -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+
+                    <h4 class="fw-bold mb-3">Enrol a Trainee</h4>
+
+                    <form action="/trainer/assign/enrol" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Course</label>
+                            <select name="courseId" class="form-select" required>
+                                <option value="">-- Select a course --</option>
+                                <option th:each="course : ${courses}"
+                                        th:value="${course.courseId}"
+                                        th:text="${course.courseName}"
+                                        th:selected="${course.courseId == selectedCourseId}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Trainee</label>
+                            <select name="traineeId" class="form-select" required>
+                                <option value="">-- Select a trainee --</option>
+                                <option th:each="trainee : ${trainees}"
+                                        th:value="${trainee.traineeId}"
+                                        th:text="${trainee.firstName + ' ' + trainee.lastName + ' (' + trainee.email + ')'}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-danger w-100">Enrol</button>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Remove -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body p-4">
+
+                    <h4 class="fw-bold mb-3">Remove a Trainee</h4>
+
+                    <form action="/trainer/assign" method="get" class="mb-4">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Select Course to View Roster</label>
+                            <select name="courseId" class="form-select" required>
+                                <option value="">-- Select a course --</option>
+                                <option th:each="course : ${courses}"
+                                        th:value="${course.courseId}"
+                                        th:text="${course.courseName}"
+                                        th:selected="${course.courseId == selectedCourseId}">
+                                </option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-dark w-100">Load Roster</button>
+                    </form>
+
+                    <!-- Roster table -->
+                    <div th:if="${roster != null}">
+                        <h6 class="fw-bold mb-2">
+                            Roster for: <span th:text="${selectedCourse.courseName}"></span>
+                        </h6>
+
+                        <p th:if="${#lists.isEmpty(roster)}" class="text-muted">
+                            No trainees enrolled on this course.
+                        </p>
+
+                        <table class="table table-bordered table-sm" th:if="${!#lists.isEmpty(roster)}">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="trainee : ${roster}">
+                                <td th:text="${trainee.firstName + ' ' + trainee.lastName}"></td>
+                                <td th:text="${trainee.email}"></td>
+                                <td>
+                                    <form action="/trainer/assign/remove" method="post">
+                                        <input type="hidden" name="traineeId" th:value="${trainee.traineeId}"/>
+                                        <input type="hidden" name="courseId" th:value="${selectedCourseId}"/>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="mt-4">
+        <a href="/dashboard" class="btn btn-dark">← Back to Dashboard</a>
+    </div>
+
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>

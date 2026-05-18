@@ -2,6 +2,7 @@ package com.sparta.spartaacademy.services;
 
 import com.sparta.spartaacademy.dtos.CourseRequestDTO;
 import com.sparta.spartaacademy.dtos.CourseResponseDTO;
+import com.sparta.spartaacademy.dtos.TraineeResponseDTO;
 import com.sparta.spartaacademy.entities.Course;
 import com.sparta.spartaacademy.entities.Trainee;
 import com.sparta.spartaacademy.entities.Trainer;
@@ -29,6 +30,37 @@ public class CourseService{
         this.trainerRepository = trainerRepository;
         this.traineeRepository = traineeRepository;
       
+    }
+
+    public List<TraineeResponseDTO> getTraineesOnCourse(Integer courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Course not found with id: " + courseId));
+        return course.getTrainees()
+                .stream()
+                .map(this::mapTraineeToResponse)
+                .collect(Collectors.toList());
+    }
+
+    public void removeTraineeFromCourse(Integer traineeId) {
+        Trainee trainee = traineeRepository.findById(traineeId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Trainee not found with id: " + traineeId));
+        trainee.setCourse(null);
+        traineeRepository.save(trainee);
+    }
+
+    private TraineeResponseDTO mapTraineeToResponse(Trainee trainee) {
+        TraineeResponseDTO dto = new TraineeResponseDTO();
+        dto.setTraineeId(trainee.getTraineeId());
+        dto.setFirstName(trainee.getFirstName());
+        dto.setLastName(trainee.getLastName());
+        dto.setEmail(trainee.getEmail());
+        dto.setCity(trainee.getCity());
+        dto.setEnrolledDate(trainee.getEnrolledDate());
+        dto.setCourseId(trainee.getCourse() != null ? trainee.getCourse().getCourseId() : null);
+        dto.setCourseName(trainee.getCourse() != null ? trainee.getCourse().getCourseName() : null);
+        return dto;
     }
  
     public CourseResponseDTO createCourse(CourseRequestDTO courseRequestDTO){

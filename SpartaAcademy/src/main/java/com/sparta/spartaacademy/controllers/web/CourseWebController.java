@@ -11,12 +11,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Controller
 @RequestMapping("/course")
-public class CourseViewController {
+public class CourseWebController {
 
     private final CourseService courseService;
     private final TrainerService trainerService;
 
-    public CourseViewController(CourseService courseService, TrainerService trainerService) {
+    public CourseWebController(CourseService courseService, TrainerService trainerService) {
         this.courseService = courseService;
         this.trainerService = trainerService;
     }

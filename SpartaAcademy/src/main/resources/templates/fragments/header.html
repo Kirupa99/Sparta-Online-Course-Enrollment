@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <body>
 
@@ -47,13 +48,17 @@
                     </li>
 
                     <!-- Profile -->
-                    <li class="nav-item">
-
+                    <li class="nav-item" sec:authorize="hasRole('TRAINER')">
                         <a class="nav-link fw-semibold"
-                           th:href="@{/profile}">
+                           th:href="@{/trainer/profile}">
                             Profile
                         </a>
-
+                    </li>
+                    <li class="nav-item" sec:authorize="hasRole('TRAINEE')">
+                        <a class="nav-link fw-semibold"
+                           th:href="@{/trainees/profile}">
+                            Profile
+                        </a>
                     </li>
 
                     <!-- Logout -->
