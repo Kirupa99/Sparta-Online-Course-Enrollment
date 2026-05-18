@@ -111,4 +111,37 @@ public class TrainerWebController {
             return "trainer/edit_course";
         }
     }
+
+    @GetMapping("/assign")
+    public String showAssignPage(@RequestParam(required = false) Integer courseId, Model model) {
+        model.addAttribute("courses", courseservice.getAllCourses());
+        model.addAttribute("trainees", traineeservice.getAllTrainees());
+        model.addAttribute("selectedCourseId", courseId);
+
+        if (courseId != null) {
+            model.addAttribute("roster", courseservice.getTraineesOnCourse(courseId));
+            model.addAttribute("selectedCourse", courseservice.getCourseById(courseId));
+        }
+
+        return "trainer/assign_trainee";
+    }
+
+    @PostMapping("/assign/enrol")
+    public String enrolTrainee(@RequestParam Integer courseId,
+                               @RequestParam Integer traineeId,
+                               Model model) {
+        try {
+            courseservice.enrollTrainee(courseId, traineeId);
+            return "redirect:/trainer/assign?courseId=" + courseId + "&success=enrolled";
+        } catch (Exception e) {
+            return "redirect:/trainer/assign?courseId=" + courseId + "&error=" + e.getMessage();
+        }
+    }
+
+    @PostMapping("/assign/remove")
+    public String removeTrainee(@RequestParam Integer traineeId,
+                                @RequestParam Integer courseId) {
+        courseservice.removeTraineeFromCourse(traineeId);
+        return "redirect:/trainer/assign?courseId=" + courseId + "&success=removed";
+    }
 }
