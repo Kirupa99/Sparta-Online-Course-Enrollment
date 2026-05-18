@@ -59,6 +59,11 @@
         <!-- Back Button -->
         <div class="col-md-4 text-end">
 
+            <a th:href="@{/trainer/courses_create}"
+               class="btn btn-success me-2">
+                ➕📘 Create Course
+            </a>
+
             <a th:href="@{/dashboard}"
                class="btn btn-dark">
                 ← Back to Dashboard
@@ -86,6 +91,7 @@
                         <th>End Date</th>
                         <th>Max Students</th>
                         <th>Trainers</th>
+                        <th>Actions</th>
                     </tr>
                     </thead>
 
@@ -115,6 +121,15 @@
                 <span th:if="${!iterStat.last}">, </span>
             </span>
                         </td>
+
+                        <td>
+                            <a th:href="@{/trainer/update_course/{id}(id=${course.courseId})}"
+                               class="btn btn-warning btn-sm fw-bold">
+                                ✏️ Update Course
+                            </a>
+                        </td>
+
+
                     </tr>
 
                     </tbody>
