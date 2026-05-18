@@ -20,6 +20,7 @@ public class Course {
     @Column(unique = true, nullable = false)
     private String courseName;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @NotNull(message = "Start date is required")
