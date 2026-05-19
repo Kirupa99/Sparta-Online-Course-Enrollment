@@ -1,16 +1,19 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      class="h-100">
 
 <head>
     <meta charset="UTF-8">
     <title>Trainer Dashboard</title>
 </head>
 
-<body class="bg-light">
+<body class="d-flex flex-column min-vh-100 bg-light">
 
 <div th:replace="~{fragments/header :: header}"></div>
 
-<main class="container py-5">
+<!-- Main Content -->
+<main class="flex-grow-1 container py-5">
 
     <!-- Welcome Section -->
     <div th:replace="~{fragments/welcome :: welcome}"></div>
@@ -21,7 +24,7 @@
         <!-- Courses -->
         <div class="col-md-4">
 
-            <div class="card text-center shadow-sm h-100">
+            <div class="card text-center shadow-sm border-0 rounded-4 h-100">
 
                 <div class="card-body p-4">
 
@@ -36,7 +39,8 @@
                     </p>
 
                     <a th:href="@{/trainer/view_courses}"
-                       class="btn btn-danger mt-3">
+                       class="btn btn-danger mt-3 px-4">
+
                         View Now
                     </a>
 
@@ -49,7 +53,7 @@
         <!-- Trainees -->
         <div class="col-md-4">
 
-            <div class="card text-center shadow-sm h-100">
+            <div class="card text-center shadow-sm border-0 rounded-4 h-100">
 
                 <div class="card-body p-4">
 
@@ -64,7 +68,8 @@
                     </p>
 
                     <a th:href="@{/trainer/view_trainees}"
-                       class="btn btn-danger mt-3">
+                       class="btn btn-danger mt-3 px-4">
+
                         View Now
                     </a>
 
@@ -77,7 +82,7 @@
         <!-- Assign Trainer -->
         <div class="col-md-4">
 
-            <div class="card text-center shadow-sm h-100">
+            <div class="card text-center shadow-sm border-0 rounded-4 h-100">
 
                 <div class="card-body p-4">
 
@@ -92,8 +97,34 @@
                     </p>
 
                     <a th:href="@{/trainer/assign}"
-                       class="btn btn-danger mt-3">
+                       class="btn btn-danger mt-3 px-4">
                         Manage Now
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card text-center shadow-sm border-0 rounded-4 h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="display-3 mb-3">
+                        👨‍🎓
+                    </div>
+
+                    <h3 class="card-title fw-bold">
+                        View My Courses
+                    </h3>
+
+                    <p class="card-text text-muted">
+                        View courses assigned to you.
+                    </p>
+
+                    <a th:href="@{/trainer/mycourses}"
+                       class="btn btn-danger mt-3 px-4">
+                        View Now
                     </a>
 
                 </div>

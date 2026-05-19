@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      class="h-100">
 
 <head>
     <meta charset="UTF-8">
@@ -9,156 +11,191 @@
           rel="stylesheet">
 </head>
 
-<body class="bg-light">
+<body class="d-flex flex-column min-vh-100 bg-light">
 
-<!-- Header -->
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div class="container py-5">
+<main class="flex-grow-1">
 
-    <!-- Page Title -->
-    <div class="text-center mb-5">
+    <div class="container py-5">
 
-        <h1 class="fw-bold">
-            All Courses
-        </h1>
+        <div class="text-center mb-5">
 
-        <p class="text-muted">
-            View all available courses in the academy.
-        </p>
+            <div th:if="${isTrainer and not isMyCourses}">
+                <h1 class="fw-bold">All Courses</h1>
+                <p class="text-muted">View all available courses in the academy.</p>
+            </div>
 
-    </div>
-
-    <!-- Search + Back Button -->
-    <div class="row mb-4 align-items-center">
-
-        <!-- Search -->
-        <div class="col-md-8">
-
-            <form th:action="@{/trainer/view_courses}" method="get">
-
-                <div class="input-group shadow-sm">
-
-                    <input type="text"
-                           name="keyword"
-                           class="form-control"
-                           placeholder="Search course by name..."
-                           th:value="${keyword}">
-
-                    <button class="btn btn-danger"
-                            type="submit">
-                        Search
-                    </button>
-
-                </div>
-
-            </form>
+            <div th:if="${isMyCourses}">
+                <h1 class="fw-bold">My Courses</h1>
+                <p class="text-muted">View your courses.</p>
+            </div>
 
         </div>
 
-        <!-- Back Button -->
-        <div class="col-md-4 text-end">
+        <div class="row mb-4 align-items-center">
 
-            <a th:if="${isTrainer}"
-               th:href="@{/course/create_course}"
-               class="btn btn-success me-2">
-                ➕📘 Create Course
-            </a>
+            <div class="col-md-8">
 
-            <a th:href="@{/dashboard}"
-               class="btn btn-dark">
-                ← Back to Dashboard
-            </a>
+                <form th:if="${isTrainer and not isMyCourses}"
+                      th:action="@{/trainer/view_courses}"
+                      method="get">
 
-        </div>
+                    <div class="input-group shadow-sm">
+                        <input type="text"
+                               name="keyword"
+                               class="form-control"
+                               placeholder="Search course by name..."
+                               th:value="${keyword}">
 
-    </div>
+                        <button class="btn btn-danger" type="submit">
+                            Search
+                        </button>
+                    </div>
 
-    <!-- Table Card -->
-    <div class="card shadow-sm border-0">
+                </form>
 
-        <div class="card-body">
+                <form th:if="${isTrainer and isMyCourses}"
+                      th:action="@{/trainer/mycourses}"
+                      method="get">
 
-            <div class="table-responsive">
+                    <div class="input-group shadow-sm">
+                        <input type="text"
+                               name="keyword"
+                               class="form-control"
+                               placeholder="Search your courses..."
+                               th:value="${keyword}">
 
-                <table class="table table-hover table-bordered align-middle mb-0">
+                        <button class="btn btn-danger" type="submit">
+                            Search
+                        </button>
+                    </div>
 
-                    <thead class="table-dark">
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th th:if="${isTrainer}">Max Students</th>
-                        <th>Trainers</th>
-                        <th th:if="${isTrainer}">Actions</th>
-                    </tr>
-                    </thead>
+                </form>
 
-                    <tbody>
+                <form th:unless="${isTrainer}"
+                      th:action="@{/trainees/courses}"
+                      method="get">
 
-                    <tr th:if="${#lists.isEmpty(courses)}">
-                        <td th:attr="colspan=${isTrainer} ? 8 : 6"
-                            class="text-center text-muted py-4">
-                            No courses found.
-                        </td>
-                    </tr>
+                    <div class="input-group shadow-sm">
+                        <input type="text"
+                               name="keyword"
+                               class="form-control"
+                               placeholder="Search your enrolled courses..."
+                               th:value="${keyword}">
 
-                    <tr th:each="course : ${courses}">
-                        <td th:text="${course.courseId}"></td>
-                        <td>
-                            <a th:if="${isTrainer}"
-                                th:href="@{/trainer/courses/{id}(id=${course.courseId})}"
-                                th:text="${course.courseName}">
-                        </a>
+                        <button class="btn btn-danger" type="submit">
+                            Search
+                        </button>
+                    </div>
 
-                            <a th:unless="${isTrainer}"
-                               th:href="@{/trainees/courses/{id}(id=${course.courseId})}"
-                               th:text="${course.courseName}">
-                            </a>
-                        </td>
-                        <td th:text="${course.description}"></td>
-                        <td th:text="${course.startDate}"></td>
-                        <td th:text="${course.endDate}"></td>
-                        <td th:if="${isTrainer}"
-                            th:text="${course.maxStudents}">
-                        </td>
+                </form>
 
-                        <td>
-            <span th:if="${course.trainerNames == null || #lists.isEmpty(course.trainerNames)}">
-                No trainer assigned
-            </span>
+            </div>
 
-                            <span th:each="trainerName, iterStat : ${course.trainerNames}">
-                <span th:text="${trainerName}">Trainer Name</span>
-                <span th:if="${!iterStat.last}">, </span>
-            </span>
-                        </td>
+            <div class="col-md-4 text-end">
 
-                        <td th:if="${isTrainer}">
-                            <a th:href="@{/trainer/edit_course/{id}(id=${course.courseId})}"
-                               class="btn btn-warning btn-sm fw-bold">
-                                ✏️ Update Course
-                            </a>
-                        </td>
+                <a th:if="${isTrainer and not isMyCourses}"
+                   th:href="@{/course/create_course}"
+                   class="btn btn-success me-2">
+                    ➕📘 Create Course
+                </a>
 
-
-                    </tr>
-
-                    </tbody>
-
-                </table>
+                <a th:href="@{/dashboard}"
+                   class="btn btn-dark">
+                    ← Back to Dashboard
+                </a>
 
             </div>
 
         </div>
 
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <div class="table-responsive">
+
+                    <table class="table table-hover table-bordered align-middle mb-0">
+
+                        <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th th:if="${isTrainer}">Max Students</th>
+                            <th>Trainers</th>
+                            <th th:if="${isTrainer and not isMyCourses}">Actions</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        <tr th:if="${#lists.isEmpty(courses)}">
+                            <td th:attr="colspan=${isTrainer} ? 8 : 6"
+                                class="text-center text-muted py-4">
+                                No courses found.
+                            </td>
+                        </tr>
+
+                        <tr th:each="course : ${courses}">
+                            <td th:text="${course.courseId}"></td>
+
+                            <td>
+                                <a th:if="${isTrainer and not isMyCourses}"
+                                   th:href="@{/trainer/courses/{id}(id=${course.courseId})}"
+                                   th:text="${course.courseName}">
+                                </a>
+
+                                <a th:if="${isTrainer and isMyCourses}"
+                                   th:href="@{/trainer/mycourses/{id}(id=${course.courseId})}"
+                                   th:text="${course.courseName}">
+                                </a>
+
+                                <a th:unless="${isTrainer}"
+                                   th:href="@{/trainees/courses/{id}(id=${course.courseId})}"
+                                   th:text="${course.courseName}">
+                                </a>
+                            </td>
+
+                            <td th:text="${course.description}"></td>
+                            <td th:text="${course.startDate}"></td>
+                            <td th:text="${course.endDate}"></td>
+
+                            <td th:if="${isTrainer}"
+                                th:text="${course.maxStudents}">
+                            </td>
+
+                            <td>
+                                <span th:if="${course.trainerNames == null || #lists.isEmpty(course.trainerNames)}">
+                                    No trainer assigned
+                                </span>
+
+                                <span th:each="trainerName, iterStat : ${course.trainerNames}">
+                                    <span th:text="${trainerName}">Trainer Name</span>
+                                    <span th:if="${!iterStat.last}">, </span>
+                                </span>
+                            </td>
+
+                            <td th:if="${isTrainer and not isMyCourses}">
+                                <a th:href="@{/trainer/edit_course/{id}(id=${course.courseId})}"
+                                   class="btn btn-warning btn-sm fw-bold">
+                                    ✏️ Update Course
+                                </a>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
     </div>
 
-</div>
+</main>
 
-<!-- Footer -->
 <div th:replace="~{fragments/footer :: footer}"></div>
 
 </body>

@@ -156,15 +156,7 @@ public class CourseService{
         Course updatedCourse = courseRepository.save(course);
         return mapToResponse(updatedCourse);
     }
-  
-//  public boolean deleteCourse(int id) {
-//        return courseRepository.findById(id)
-//                .map(course -> {
-//                    courseRepository.delete(course);
-//                    return true;
-//                })
-//                .orElse(false);
-//    }
+
 
 
     public boolean deleteCourse(int id){
@@ -236,5 +228,39 @@ public class CourseService{
         return List.of(dto);
     }
 
+    public List<CourseResponseDTO> getCoursesForTrainer(String email) {
 
-}
+            System.out.println("Logged in trainer email: " + email);
+            List<Course> courses = courseRepository.findByTrainers_Email(email);
+            System.out.println("Courses found: " + courses.size());
+            return courses.stream()
+                    .map(this::mapToResponse)
+                    .toList();
+        }
+
+    public List<CourseResponseDTO> searchCoursesForTrainer(String email,
+                                                           String keyword) {
+
+        return getCoursesForTrainer(email)
+                .stream()
+                .filter(course ->
+                        course.getCourseName()
+                                .toLowerCase()
+                                .contains(keyword.toLowerCase()))
+                .toList();
+    }
+
+    public List<CourseResponseDTO> searchCoursesForTrainee(String email,
+                                                           String keyword) {
+
+        return getCoursesForTrainee(email)
+                .stream()
+                .filter(course ->
+                        course.getCourseName()
+                                .toLowerCase()
+                                .contains(keyword.toLowerCase()))
+                .toList();
+    }
+
+    }
+

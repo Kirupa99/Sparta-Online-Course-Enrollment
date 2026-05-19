@@ -8,6 +8,7 @@ import com.sparta.spartaacademy.entities.Trainer;
 import com.sparta.spartaacademy.services.CourseService;
 import com.sparta.spartaacademy.services.TraineeService;
 import com.sparta.spartaacademy.services.TrainerService;
+import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -68,8 +69,28 @@ public class TrainerWebController {
 
         model.addAttribute("courses", courses);
         model.addAttribute("keyword", keyword);
+        model.addAttribute("isMyCourses", false);
         model.addAttribute("isTrainer", true);
 
+        return "trainer/view_courses";
+    }
+
+    @GetMapping("/mycourses")
+    public String viewTrainerCourses(@RequestParam(required = false) String keyword,
+                                     Model model,
+                                     Authentication authentication) {
+
+        String email = authentication.getName();
+        List<CourseResponseDTO> courses;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            courses = courseservice.searchCoursesForTrainer(email, keyword);
+        } else {
+            courses = courseservice.getCoursesForTrainer(email);
+        }
+        model.addAttribute("courses", courses);
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("isTrainer", true);
+        model.addAttribute("isMyCourses", true);
         return "trainer/view_courses";
     }
 
@@ -78,6 +99,7 @@ public class TrainerWebController {
         CourseResponseDTO course = courseservice.getCourseById(id);
         model.addAttribute("course", course);
         model.addAttribute("isTrainer", true);
+        model.addAttribute("isMyCourses", false);
         return "trainer/view_course_detail";
     }
 
@@ -176,6 +198,18 @@ public class TrainerWebController {
             model.addAttribute("error", e.getReason());
             return "trainer/trainer_profile";
         }
+    }
+
+    @GetMapping("/mycourses/{id}")
+    public String viewMyCourseDetail(@PathVariable Integer id, Model model) {
+
+        CourseResponseDTO course = courseservice.getCourseById(id);
+
+        model.addAttribute("course", course);
+        model.addAttribute("isTrainer", true);
+        model.addAttribute("isMyCourses", true);
+
+        return "trainer/view_course_detail";
     }
 
 

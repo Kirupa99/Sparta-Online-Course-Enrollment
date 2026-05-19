@@ -1,54 +1,95 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      class="h-100">
 
 <head>
     <meta charset="UTF-8">
     <title th:text="${course.courseName}">Course Detail</title>
 </head>
 
-<body>
+<body class="d-flex flex-column min-vh-100">
 
 <div th:replace="~{fragments/header :: header}"></div>
 
-<div style="padding: 40px;">
+<main class="flex-grow-1">
 
-    <h1 th:text="${course.courseName}"></h1>
-    <p th:text="${course.description}"></p>
-    <p><strong>Start Date:</strong> <span th:text="${course.startDate}"></span></p>
-    <p><strong>End Date:</strong> <span th:text="${course.endDate}"></span></p>
-    <p><strong>Max Students:</strong> <span th:text="${course.maxStudents}"></span></p>
+    <div style="padding: 40px;">
 
-    <hr>
+        <h1 th:text="${course.courseName}"></h1>
 
-    <h3>Trainers</h3>
-    <p th:if="${#lists.isEmpty(course.trainerNames)}">No trainers assigned.</p>
-    <ul th:unless="${#lists.isEmpty(course.trainerNames)}">
-        <li th:each="name : ${course.trainerNames}" th:text="${name}"></li>
-    </ul>
+        <p th:text="${course.description}"></p>
 
-    <hr>
+        <p>
+            <strong>Start Date:</strong>
+            <span th:text="${course.startDate}"></span>
+        </p>
 
-    <h3>Enrolled Trainees</h3>
-    <p th:if="${#lists.isEmpty(course.traineeNames)}">No trainees enrolled.</p>
-    <ul th:unless="${#lists.isEmpty(course.traineeNames)}">
-        <li th:each="name : ${course.traineeNames}" th:text="${name}"></li>
-    </ul>
+        <p>
+            <strong>End Date:</strong>
+            <span th:text="${course.endDate}"></span>
+        </p>
 
-    <hr>
+        <p>
+            <strong>Max Students:</strong>
+            <span th:text="${course.maxStudents}"></span>
+        </p>
 
-    <a th:if="${isTrainer}"
-       th:href="@{/trainer/view_courses}"
-       class="btn btn-dark">
-        ← Back to Courses
-    </a>
+        <hr>
 
-    <a th:unless="${isTrainer}"
-       th:href="@{/trainees/courses}"
-       class="btn btn-dark">
-        ← Back to My Courses
-    </a>
+        <h3>Trainers</h3>
 
-</div>
+        <p th:if="${#lists.isEmpty(course.trainerNames)}">
+            No trainers assigned.
+        </p>
+
+        <ul th:unless="${#lists.isEmpty(course.trainerNames)}">
+
+            <li th:each="name : ${course.trainerNames}"
+                th:text="${name}">
+            </li>
+
+        </ul>
+
+        <hr>
+
+        <h3>Enrolled Trainees</h3>
+
+        <p th:if="${#lists.isEmpty(course.traineeNames)}">
+            No trainees enrolled.
+        </p>
+
+        <ul th:unless="${#lists.isEmpty(course.traineeNames)}">
+
+            <li th:each="name : ${course.traineeNames}"
+                th:text="${name}">
+            </li>
+
+        </ul>
+
+        <hr>
+
+        <a th:if="${isTrainer and not isMyCourses}"
+           th:href="@{/trainer/view_courses}"
+           class="btn btn-dark">
+            ← Back to Courses
+        </a>
+
+        <a th:if="${isTrainer and isMyCourses}"
+           th:href="@{/trainer/mycourses}"
+           class="btn btn-dark">
+            ← Back to My Courses
+        </a>
+
+        <a th:unless="${isTrainer}"
+           th:href="@{/trainees/courses}"
+           class="btn btn-dark">
+            ← Back to My Courses
+        </a>
+
+    </div>
+
+</main>
 
 <div th:replace="~{fragments/footer :: footer}"></div>
 
