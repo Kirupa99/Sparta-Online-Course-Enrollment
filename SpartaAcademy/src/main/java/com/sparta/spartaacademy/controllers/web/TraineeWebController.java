@@ -82,14 +82,25 @@ public class TraineeWebController
     }
 
     @GetMapping("/courses")
-    public String viewTraineeCourses(Model model,
+    public String viewTraineeCourses(@RequestParam(required = false) String keyword,
+                                     Model model,
                                      Authentication authentication) {
 
         String email = authentication.getName();
 
-        List<CourseResponseDTO> courses = courseservice.getCoursesForTrainee(email);
+        List<CourseResponseDTO> courses;
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+
+            courses = courseservice.searchCoursesForTrainee(email, keyword);
+
+        } else {
+
+            courses = courseservice.getCoursesForTrainee(email);
+        }
 
         model.addAttribute("courses", courses);
+        model.addAttribute("keyword", keyword);
         model.addAttribute("isTrainer", false);
         model.addAttribute("isMyCourses", true);
 
