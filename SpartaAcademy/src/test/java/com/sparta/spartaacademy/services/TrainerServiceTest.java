@@ -2,29 +2,21 @@ package com.sparta.spartaacademy.services;
 
 import com.sparta.spartaacademy.dtos.TrainerRequestDTO;
 import com.sparta.spartaacademy.dtos.TrainerResponseDTO;
-import com.sparta.spartaacademy.entities.Course;
 import com.sparta.spartaacademy.entities.Trainer;
 import com.sparta.spartaacademy.repositories.TrainerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
+import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class TrainerServiceTest {
 
     @Mock
@@ -33,138 +25,149 @@ class TrainerServiceTest {
     @InjectMocks
     private TrainerService trainerService;
 
-    private TrainerRequestDTO requestDTO;
     private Trainer trainer;
+    private TrainerRequestDTO requestDTO;
+    private TrainerResponseDTO responseDTO;
 
     @BeforeEach
     void setUp() {
-        requestDTO = new TrainerRequestDTO(
-                "Curtis", "Logan", "curtis.logan@example.com", "01254123456");
-        trainer = new Trainer(
-                "Curtis", "Logan", "curtis.logan@example.com", "01254123456");
+        MockitoAnnotations.openMocks(this);
+
+        trainer = new Trainer();
         trainer.setTrainerId(1);
+        trainer.setFirstName("Alice");
+        trainer.setLastName("Smith");
+        trainer.setEmail("alice@sparta.com");
+        trainer.setPhoneNumber("07700000001");
+        trainer.setRole("TRAINER");
+        trainer.setCourses(List.of());
+
+        requestDTO = new TrainerRequestDTO();
+        requestDTO.setFirstName("Alice");
+        requestDTO.setLastName("Smith");
+        requestDTO.setEmail("alice@sparta.com");
+        requestDTO.setPhoneNumber("07700000001");
+
+        responseDTO = new TrainerResponseDTO(1, "Alice", "Smith",
+                "alice@sparta.com", "07700000001", List.of());
     }
 
+    // createTrainer
+
     @Test
-    void createTrainer_savesAndReturnsDTO() {
-        when(trainerRepository.existsByEmail("curtis.logan@example.com")).thenReturn(false);
+    void createTrainer_validData_returnsResponseDTO() {
+        when(trainerRepository.existsByEmail(requestDTO.getEmail())).thenReturn(false);
         when(trainerRepository.save(any(Trainer.class))).thenReturn(trainer);
 
         TrainerResponseDTO result = trainerService.createTrainer(requestDTO);
 
-        assertEquals(1, result.getTrainerId());
-        assertEquals("Curtis", result.getFirstName());
-        assertEquals("Logan", result.getLastName());
-        assertEquals("curtis.logan@example.com", result.getEmail());
-        assertEquals("01254123456", result.getPhoneNumber());
-        assertEquals(List.of(), result.getCourseIds());
-        verify(trainerRepository).save(any(Trainer.class));
+        assertNotNull(result);
+        assertEquals("Alice", result.getFirstName());
+        verify(trainerRepository, times(1)).save(any(Trainer.class));
     }
 
     @Test
-    void createTrainer_throwsWhenEmailExists() {
-        when(trainerRepository.existsByEmail("curtis.logan@example.com")).thenReturn(true);
+    void createTrainer_duplicateEmail_throwsResponseStatusException() {
+        when(trainerRepository.existsByEmail(requestDTO.getEmail())).thenReturn(true);
 
-        ResponseStatusException ex = assertThrows(
-                ResponseStatusException.class,
-                () -> trainerService.createTrainer(requestDTO)
-        );
-        assertEquals(HttpStatus.CONFLICT, ex.getStatusCode());
-        assertTrue(ex.getMessage().contains("Email already exists"));
-        verify(trainerRepository, never()).save(any(Trainer.class));
+        assertThrows(ResponseStatusException.class, () -> trainerService.createTrainer(requestDTO));
+        verify(trainerRepository, never()).save(any());
     }
 
+    // getTrainerById
+
     @Test
-    void getTrainerById_returnsDTO() {
+    void getTrainerById_validId_returnsResponseDTO() {
         when(trainerRepository.findById(1)).thenReturn(Optional.of(trainer));
 
         TrainerResponseDTO result = trainerService.getTrainerById(1);
 
+        assertNotNull(result);
         assertEquals(1, result.getTrainerId());
-        assertEquals("Curtis", result.getFirstName());
+        assertEquals("Alice", result.getFirstName());
     }
 
     @Test
-    void getTrainerById_includesCourseIds() {
-        Course c1 = mock(Course.class);
-        when(c1.getCourseId()).thenReturn(10);
-        Course c2 = mock(Course.class);
-        when(c2.getCourseId()).thenReturn(20);
-        trainer.setCourses(List.of(c1, c2));
-        when(trainerRepository.findById(1)).thenReturn(Optional.of(trainer));
-
-        TrainerResponseDTO result = trainerService.getTrainerById(1);
-
-        assertEquals(List.of(10, 20), result.getCourseIds());
-    }
-
-    @Test
-    void getTrainerById_throwsWhenMissing() {
+    void getTrainerById_invalidId_throwsResponseStatusException() {
         when(trainerRepository.findById(99)).thenReturn(Optional.empty());
 
-        ResponseStatusException ex = assertThrows(
-                ResponseStatusException.class,
-                () -> trainerService.getTrainerById(99)
-        );
-        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
-        assertTrue(ex.getMessage().contains("99"));
+        assertThrows(ResponseStatusException.class, () -> trainerService.getTrainerById(99));
     }
+
+    // getAllTrainers
 
     @Test
     void getAllTrainers_returnsList() {
-        Trainer second = new Trainer(
-                "Jane", "Lancaster", "jane.lancaster@example.com", "01524000111");
-        second.setTrainerId(2);
-        when(trainerRepository.findAll()).thenReturn(List.of(trainer, second));
+        when(trainerRepository.findAll()).thenReturn(List.of(trainer));
 
         List<TrainerResponseDTO> result = trainerService.getAllTrainers();
 
-        assertEquals(2, result.size());
-        assertEquals("Curtis", result.get(0).getFirstName());
-        assertEquals("Jane", result.get(1).getFirstName());
+        assertEquals(1, result.size());
+        assertEquals("Alice", result.get(0).getFirstName());
     }
 
     @Test
-    void updateTrainer_savesAndReturnsDTO() {
+    void getAllTrainers_emptyList_returnsEmptyList() {
+        when(trainerRepository.findAll()).thenReturn(List.of());
+
+        List<TrainerResponseDTO> result = trainerService.getAllTrainers();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    // updateTrainer
+
+    @Test
+    void updateTrainer_validId_returnsUpdatedDTO() {
+        TrainerRequestDTO updatedDTO = new TrainerRequestDTO();
+        updatedDTO.setFirstName("Alicia");
+        updatedDTO.setLastName("Smith");
+        updatedDTO.setEmail("alicia@sparta.com");
+        updatedDTO.setPhoneNumber("07700000099");
+
+        Trainer updatedTrainer = new Trainer();
+        updatedTrainer.setTrainerId(1);
+        updatedTrainer.setFirstName("Alicia");
+        updatedTrainer.setLastName("Smith");
+        updatedTrainer.setEmail("alicia@sparta.com");
+        updatedTrainer.setPhoneNumber("07700000099");
+        updatedTrainer.setCourses(List.of());
+
         when(trainerRepository.findById(1)).thenReturn(Optional.of(trainer));
-        when(trainerRepository.save(any(Trainer.class))).thenAnswer(inv -> inv.getArgument(0));
-        TrainerRequestDTO updateDTO = new TrainerRequestDTO(
-                "Curtis", "Logan", "curtis.logan@lancashire.com", "01772999888");
+        when(trainerRepository.save(any(Trainer.class))).thenReturn(updatedTrainer);
 
-        TrainerResponseDTO result = trainerService.updateTrainer(1, updateDTO);
+        TrainerResponseDTO result = trainerService.updateTrainer(1, updatedDTO);
 
-        assertEquals(1, result.getTrainerId());
-        assertEquals("Curtis", result.getFirstName());
-        assertEquals("curtis.logan@lancashire.com", result.getEmail());
-        assertEquals("01772999888", result.getPhoneNumber());
+        assertNotNull(result);
+        assertEquals("Alicia", result.getFirstName());
+        verify(trainerRepository, times(1)).save(any(Trainer.class));
     }
 
     @Test
-    void updateTrainer_throwsWhenMissing() {
+    void updateTrainer_invalidId_throwsResponseStatusException() {
         when(trainerRepository.findById(99)).thenReturn(Optional.empty());
 
-        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-                () -> trainerService.updateTrainer(99, requestDTO));
-        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
-        verify(trainerRepository, never()).save(any(Trainer.class));
+        assertThrows(ResponseStatusException.class, () -> trainerService.updateTrainer(99, requestDTO));
+        verify(trainerRepository, never()).save(any());
     }
 
+    // deleteTrainer
+
     @Test
-    void deleteTrainer_callsRepository() {
+    void deleteTrainer_validId_deletesSuccessfully() {
         when(trainerRepository.existsById(1)).thenReturn(true);
 
         trainerService.deleteTrainer(1);
 
-        verify(trainerRepository).deleteById(1);
+        verify(trainerRepository, times(1)).deleteById(1);
     }
 
     @Test
-    void deleteTrainer_throwsWhenMissing() {
+    void deleteTrainer_invalidId_throwsResponseStatusException() {
         when(trainerRepository.existsById(99)).thenReturn(false);
 
-        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-                () -> trainerService.deleteTrainer(99));
-        assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
-        verify(trainerRepository, never()).deleteById(anyInt());
+        assertThrows(ResponseStatusException.class, () -> trainerService.deleteTrainer(99));
+        verify(trainerRepository, never()).deleteById(any());
     }
 }

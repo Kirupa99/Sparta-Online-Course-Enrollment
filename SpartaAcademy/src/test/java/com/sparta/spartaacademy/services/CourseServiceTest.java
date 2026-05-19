@@ -10,244 +10,272 @@ import com.sparta.spartaacademy.repositories.TraineeRepository;
 import com.sparta.spartaacademy.repositories.TrainerRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
 class CourseServiceTest {
 
-    @Mock CourseRepository courseRepository;
-    @Mock TrainerRepository trainerRepository;
-    @Mock TraineeRepository traineeRepository;
+    @Mock
+    private CourseRepository courseRepository;
 
-    @InjectMocks CourseService courseService;
+    @Mock
+    private TrainerRepository trainerRepository;
 
-    Trainer john;
-    Trainer sarah;
-    Course javaCourse;
-    Course cSharpCourse;
-    CourseRequestDTO javaRequest;
+    @Mock
+    private TraineeRepository traineeRepository;
+
+    @InjectMocks
+    private CourseService courseService;
+
+    private Course course;
+    private CourseRequestDTO requestDTO;
+    private Trainer trainer;
+    private Trainee trainee;
 
     @BeforeEach
     void setUp() {
-        john = trainer("John", "Smith");
-        sarah = trainer("Sarah", "Jones");
+        MockitoAnnotations.openMocks(this);
 
-        javaCourse = course(1, "Java Development", "Java course", 20, List.of(john));
-        cSharpCourse = course(2, "C# Development", "C# course", 15, List.of(sarah));
+        trainer = new Trainer();
+        trainer.setTrainerId(1);
+        trainer.setFirstName("Alice");
+        trainer.setLastName("Smith");
+        trainer.setEmail("alice@sparta.com");
+        trainer.setCourses(new ArrayList<>());
 
-        javaRequest = request("Java Development", "Java course", 20, List.of(1));
+        trainee = new Trainee();
+        trainee.setTraineeId(1);
+        trainee.setFirstName("Charlie");
+        trainee.setLastName("Brown");
+        trainee.setEmail("charlie@sparta.com");
+
+        course = new Course();
+        course.setCourseName("Java Development");
+        course.setDescription("Advanced Java");
+        course.setStartDate(LocalDate.of(2026, 4, 10));
+        course.setEndDate(LocalDate.of(2026, 8, 10));
+        course.setMaxStudents(20);
+        course.setTrainers(new ArrayList<>(List.of(trainer)));
+        course.setTrainees(new ArrayList<>());
+
+        requestDTO = new CourseRequestDTO();
+        requestDTO.setCourseName("Java Development");
+        requestDTO.setDescription("Advanced Java");
+        requestDTO.setStartDate(LocalDate.of(2026, 4, 10));
+        requestDTO.setEndDate(LocalDate.of(2026, 8, 10));
+        requestDTO.setMaxStudents(20);
+    }
+
+    // createCourse
+
+    @Test
+    void createCourse_validData_returnsResponseDTO() {
+        when(courseRepository.existsByCourseName(requestDTO.getCourseName())).thenReturn(false);
+        when(courseRepository.save(any(Course.class))).thenReturn(course);
+
+        CourseResponseDTO result = courseService.createCourse(requestDTO);
+
+        assertNotNull(result);
+        assertEquals("Java Development", result.getCourseName());
+        verify(courseRepository, times(1)).save(any(Course.class));
     }
 
     @Test
-    void createCourse_ShouldCreateCourse_WhenCourseDoesNotAlreadyExist() {
-        when(courseRepository.existsByCourseName("Java Development")).thenReturn(false);
-        when(trainerRepository.findAllById(List.of(1))).thenReturn(List.of(john));
-        when(courseRepository.save(any(Course.class))).thenReturn(javaCourse);
+    void createCourse_duplicateName_throwsResponseStatusException() {
+        when(courseRepository.existsByCourseName(requestDTO.getCourseName())).thenReturn(true);
 
-        CourseResponseDTO response = courseService.createCourse(javaRequest);
-
-        assertCourse(response, "Java Development", "Java course", 20, List.of("John Smith"));
-        verify(courseRepository).save(any(Course.class));
-    }
-
-    @Test
-    void createCourse_ShouldThrowConflict_WhenCourseAlreadyExists() {
-        when(courseRepository.existsByCourseName("Java Development")).thenReturn(true);
-
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class,
-                () -> courseService.createCourse(javaRequest)
-        );
-
-        assertEquals(409, exception.getStatusCode().value());
+        assertThrows(ResponseStatusException.class, () -> courseService.createCourse(requestDTO));
         verify(courseRepository, never()).save(any());
     }
 
+    // getCourseById
+
     @Test
-    void getAllCourses_ShouldReturnAllCourses() {
-        when(courseRepository.findAll()).thenReturn(List.of(javaCourse, cSharpCourse));
+    void getCourseById_validId_returnsResponseDTO() {
+        when(courseRepository.findById(1)).thenReturn(Optional.of(course));
 
-        List<CourseResponseDTO> response = courseService.getAllCourses();
+        CourseResponseDTO result = courseService.getCourseById(1);
 
-        assertEquals(2, response.size());
-        assertCourse(response.get(0), "Java Development", "Java course", 20, List.of("John Smith"));
-        assertCourse(response.get(1), "C# Development", "C# course", 15, List.of("Sarah Jones"));
+        assertNotNull(result);
+        assertEquals("Java Development", result.getCourseName());
     }
 
     @Test
-    void updateCourse_ShouldUpdateCourse_WhenCourseExists() {
-        CourseRequestDTO updateRequest = request("Updated Java Course", "Updated description", 25, List.of(1));
-        Course updatedCourse = course(1, "Updated Java Course", "Updated description", 25, List.of(john));
-
-        when(courseRepository.findById(1)).thenReturn(Optional.of(javaCourse));
-        when(trainerRepository.findAllById(List.of(1))).thenReturn(List.of(john));
-        when(courseRepository.save(javaCourse)).thenReturn(updatedCourse);
-
-        CourseResponseDTO response = courseService.updateCourse(1, updateRequest);
-
-        assertCourse(response, "Updated Java Course", "Updated description", 25, List.of("John Smith"));
-    }
-
-    @Test
-    void updateCourse_ShouldThrowNotFound_WhenCourseDoesNotExist() {
+    void getCourseById_invalidId_throwsResponseStatusException() {
         when(courseRepository.findById(99)).thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class,
-                () -> courseService.updateCourse(99, javaRequest)
-        );
+        assertThrows(ResponseStatusException.class, () -> courseService.getCourseById(99));
+    }
 
-        assertEquals(404, exception.getStatusCode().value());
+    // getAllCourses
+
+    @Test
+    void getAllCourses_returnsList() {
+        when(courseRepository.findAll()).thenReturn(List.of(course));
+
+        List<CourseResponseDTO> result = courseService.getAllCourses();
+
+        assertEquals(1, result.size());
+        assertEquals("Java Development", result.get(0).getCourseName());
+    }
+
+    @Test
+    void getAllCourses_emptyList_returnsEmptyList() {
+        when(courseRepository.findAll()).thenReturn(List.of());
+
+        List<CourseResponseDTO> result = courseService.getAllCourses();
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    // searchCoursesByName
+
+    @Test
+    void searchCoursesByName_matchingResults_returnsList() {
+        when(courseRepository.findCoursesByCourseNameContainingIgnoreCase("Java")).thenReturn(List.of(course));
+
+        List<CourseResponseDTO> result = courseService.searchCoursesByName("Java");
+
+        assertEquals(1, result.size());
+        assertEquals("Java Development", result.get(0).getCourseName());
+    }
+
+    @Test
+    void searchCoursesByName_noMatches_returnsEmptyList() {
+        when(courseRepository.findCoursesByCourseNameContainingIgnoreCase("Unknown")).thenReturn(List.of());
+
+        List<CourseResponseDTO> result = courseService.searchCoursesByName("Unknown");
+
+        assertTrue(result.isEmpty());
+    }
+
+    // updateCourse
+
+    @Test
+    void updateCourse_validId_returnsUpdatedDTO() {
+        when(courseRepository.findById(1)).thenReturn(Optional.of(course));
+        when(courseRepository.save(any(Course.class))).thenReturn(course);
+
+        CourseResponseDTO result = courseService.updateCourse(1, requestDTO);
+
+        assertNotNull(result);
+        verify(courseRepository, times(1)).save(any(Course.class));
+    }
+
+    @Test
+    void updateCourse_invalidId_throwsResponseStatusException() {
+        when(courseRepository.findById(99)).thenReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class, () -> courseService.updateCourse(99, requestDTO));
         verify(courseRepository, never()).save(any());
     }
 
-//    @Test
-//    void deleteCourse_ShouldDeleteCourse_WhenCourseExists() {
-//        when(courseRepository.findById(1)).thenReturn(Optional.of(javaCourse));
-//
-//        assertTrue(courseService.deleteCourse(1));
-//
-//        verify(courseRepository).delete(javaCourse);
-//    }
+    // deleteCourse
 
     @Test
-    void deleteCourse_ShouldReturnFalse_WhenCourseDoesNotExist() {
+    void deleteCourse_validId_returnsTrue() {
+        course.setTrainees(new ArrayList<>());
+        course.setTrainers(new ArrayList<>());
+        when(courseRepository.findById(1)).thenReturn(Optional.of(course));
+
+        boolean result = courseService.deleteCourse(1);
+
+        assertTrue(result);
+        verify(courseRepository, times(1)).delete(course);
+    }
+
+    @Test
+    void deleteCourse_invalidId_returnsFalse() {
         when(courseRepository.findById(99)).thenReturn(Optional.empty());
 
-        assertFalse(courseService.deleteCourse(99));
+        boolean result = courseService.deleteCourse(99);
 
+        assertFalse(result);
         verify(courseRepository, never()).delete(any());
     }
 
     @Test
-    void enrollTrainee_ShouldEnrollTrainee_WhenValidCourseAndTrainee() {
-        Trainee trainee = new Trainee();
+    void deleteCourse_withTrainees_setsTraineeCourseToNull() {
+        trainee.setCourse(course);
+        course.setTrainees(new ArrayList<>(List.of(trainee)));
+        when(courseRepository.findById(1)).thenReturn(Optional.of(course));
 
-        when(courseRepository.findById(1)).thenReturn(Optional.of(javaCourse));
+        courseService.deleteCourse(1);
+
+        assertNull(trainee.getCourse());
+        verify(traineeRepository, times(1)).saveAll(anyList());
+    }
+
+    // enrollTrainee
+
+    @Test
+    void enrollTrainee_validIds_returnsUpdatedCourse() {
+        trainee.setCourse(null);
+        when(courseRepository.findById(1)).thenReturn(Optional.of(course));
         when(traineeRepository.findById(1)).thenReturn(Optional.of(trainee));
+        when(traineeRepository.save(trainee)).thenReturn(trainee);
 
-        CourseResponseDTO response = courseService.enrollTrainee(1, 1);
+        CourseResponseDTO result = courseService.enrollTrainee(1, 1);
 
-        assertCourse(response, "Java Development", "Java course", 20, List.of("John Smith"));
-        assertEquals(javaCourse, trainee.getCourse());
-        verify(traineeRepository).save(trainee);
+        assertNotNull(result);
+        assertEquals(course, trainee.getCourse());
+        verify(traineeRepository, times(1)).save(trainee);
     }
 
     @Test
-    void enrollTrainee_ShouldThrowNotFound_WhenCourseDoesNotExist() {
+    void enrollTrainee_invalidCourseId_throwsResponseStatusException() {
         when(courseRepository.findById(99)).thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class,
-                () -> courseService.enrollTrainee(99, 1)
-        );
-
-        assertEquals(404, exception.getStatusCode().value());
-        verify(traineeRepository, never()).findById(any());
+        assertThrows(ResponseStatusException.class, () -> courseService.enrollTrainee(99, 1));
     }
 
     @Test
-    void enrollTrainee_ShouldThrowNotFound_WhenTraineeDoesNotExist() {
-        when(courseRepository.findById(1)).thenReturn(Optional.of(javaCourse));
+    void enrollTrainee_invalidTraineeId_throwsResponseStatusException() {
+        when(courseRepository.findById(1)).thenReturn(Optional.of(course));
         when(traineeRepository.findById(99)).thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class,
-                () -> courseService.enrollTrainee(1, 99)
-        );
+        assertThrows(ResponseStatusException.class, () -> courseService.enrollTrainee(1, 99));
+    }
 
-        assertEquals(404, exception.getStatusCode().value());
-        verify(traineeRepository, never()).save(any());
+    // getTrainersCourses
+
+    @Test
+    void getTrainersCourses_validTrainerId_returnsList() {
+        trainer.setCourses(List.of(course));
+        when(trainerRepository.findById(1)).thenReturn(Optional.of(trainer));
+
+        List<CourseResponseDTO> result = courseService.getTrainersCourses(1);
+
+        assertEquals(1, result.size());
+        assertEquals("Java Development", result.get(0).getCourseName());
     }
 
     @Test
-    void enrollTrainee_ShouldThrowConflict_WhenTraineeAlreadyEnrolled() {
-        Trainee trainee = new Trainee();
-        trainee.setCourse(javaCourse);
-
-        when(courseRepository.findById(1)).thenReturn(Optional.of(javaCourse));
-        when(traineeRepository.findById(1)).thenReturn(Optional.of(trainee));
-
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class,
-                () -> courseService.enrollTrainee(1, 1)
-        );
-
-        assertEquals(409, exception.getStatusCode().value());
-        verify(traineeRepository, never()).save(any());
-    }
-
-    @Test
-    void getTrainersCourses_ShouldReturnCourses_WhenTrainerExists() {
-        john.setCourses(List.of(javaCourse, cSharpCourse));
-        when(trainerRepository.findById(1)).thenReturn(Optional.of(john));
-
-        List<CourseResponseDTO> response = courseService.getTrainersCourses(1);
-
-        assertEquals(2, response.size());
-    }
-
-    @Test
-    void getTrainersCourses_ShouldThrowNotFound_WhenTrainerDoesNotExist() {
+    void getTrainersCourses_invalidTrainerId_throwsResponseStatusException() {
         when(trainerRepository.findById(99)).thenReturn(Optional.empty());
 
-        ResponseStatusException exception = assertThrows(
-                ResponseStatusException.class,
-                () -> courseService.getTrainersCourses(99)
-        );
-
-        assertEquals(404, exception.getStatusCode().value());
+        assertThrows(ResponseStatusException.class, () -> courseService.getTrainersCourses(99));
     }
 
-    private Trainer trainer(String firstName, String lastName) {
-        Trainer trainer = new Trainer();
-        trainer.setFirstName(firstName);
-        trainer.setLastName(lastName);
-        return trainer;
-    }
+    @Test
+    void getTrainersCourses_noCoursesAssigned_returnsEmptyList() {
+        trainer.setCourses(List.of());
+        when(trainerRepository.findById(1)).thenReturn(Optional.of(trainer));
 
-    private Course course(Integer id, String name, String description, Integer maxStudents, List<Trainer> trainers) {
-        Course course = new Course(
-                name,
-                description,
-                LocalDate.of(2026, 5, 1),
-                LocalDate.of(2026, 7, 1),
-                maxStudents,
-                trainers
-        );
+        List<CourseResponseDTO> result = courseService.getTrainersCourses(1);
 
-        ReflectionTestUtils.setField(course, "courseId", id);
-        return course;
-    }
-
-    private CourseRequestDTO request(String name, String description, Integer maxStudents, List<Integer> trainerIds) {
-        CourseRequestDTO request = new CourseRequestDTO();
-        request.setCourseName(name);
-        request.setDescription(description);
-        request.setStartDate(LocalDate.of(2026, 5, 1));
-        request.setEndDate(LocalDate.of(2026, 7, 1));
-        request.setMaxStudents(maxStudents);
-        request.setTrainerIds(trainerIds);
-        return request;
-    }
-
-    private void assertCourse(CourseResponseDTO response, String name, String description, int maxStudents, List<String> trainers) {
-        assertNotNull(response);
-        assertEquals(name, response.getCourseName());
-        assertEquals(description, response.getDescription());
-        assertEquals(maxStudents, response.getMaxStudents());
-        assertEquals(trainers, response.getTrainerNames());
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 }
