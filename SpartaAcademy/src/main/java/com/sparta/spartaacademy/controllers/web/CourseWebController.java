@@ -42,7 +42,7 @@ public class CourseWebController {
         } catch (ResponseStatusException e) {
             model.addAttribute("error", e.getReason());
             model.addAttribute("trainers", trainerService.getAllTrainers());
-            return "create_course";
+            return "trainer/create_course";
         }
     }
 }
