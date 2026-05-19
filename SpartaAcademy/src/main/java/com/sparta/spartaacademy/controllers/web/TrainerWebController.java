@@ -8,6 +8,7 @@ import com.sparta.spartaacademy.entities.Trainer;
 import com.sparta.spartaacademy.services.CourseService;
 import com.sparta.spartaacademy.services.TraineeService;
 import com.sparta.spartaacademy.services.TrainerService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -35,7 +36,7 @@ public class TrainerWebController {
         this.traineeservice = traineeservice;
         this.courseservice = courseservice;
     }
-
+        @PreAuthorize("hasRole('TRAINER')")
         @GetMapping("/view_trainees")
         public String viewAllTrainees(
                 @RequestParam(required = false) String keyword,
@@ -57,7 +58,7 @@ public class TrainerWebController {
 
             return "trainer/view_trainees";
         }
-
+    @PreAuthorize("hasRole('TRAINER')")
     @GetMapping("/view_courses")
     public String viewAllCourses(@RequestParam(required = false) String keyword,
                                  Model model) {
@@ -74,7 +75,7 @@ public class TrainerWebController {
 
         return "trainer/view_courses";
     }
-
+    @PreAuthorize("hasRole('TRAINER')")
     @GetMapping("/mycourses")
     public String viewTrainerCourses(@RequestParam(required = false) String keyword,
                                      Model model,
@@ -93,7 +94,7 @@ public class TrainerWebController {
         model.addAttribute("isMyCourses", true);
         return "trainer/view_courses";
     }
-
+    @PreAuthorize("hasRole('TRAINER')")
     @GetMapping("/courses/{id}")
     public String viewCourseDetail(@PathVariable Integer id, Model model) {
         CourseResponseDTO course = courseservice.getCourseById(id);
@@ -102,7 +103,7 @@ public class TrainerWebController {
         model.addAttribute("isMyCourses", false);
         return "trainer/view_course_detail";
     }
-
+    @PreAuthorize("hasRole('TRAINER')")
     @GetMapping("/edit_course/{id}")
     public String showEditCourseForm(@PathVariable Integer id, Model model) {
         CourseResponseDTO course = courseservice.getCourseById(id);
@@ -110,7 +111,7 @@ public class TrainerWebController {
         model.addAttribute("trainers", trainerservice.getAllTrainers());
         return "trainer/edit_course";
     }
-
+    @PreAuthorize("hasRole('TRAINER')")
     @PostMapping("/edit_course/{id}")
     public String updateCourse(@PathVariable Integer id,
                                @RequestParam String courseName,
@@ -138,7 +139,7 @@ public class TrainerWebController {
             return "trainer/edit_course";
         }
     }
-
+    @PreAuthorize("hasRole('TRAINER')")
     @GetMapping("/assign")
     public String showAssignPage(@RequestParam(required = false) Integer courseId, Model model) {
         model.addAttribute("courses", courseservice.getAllCourses());
@@ -152,7 +153,7 @@ public class TrainerWebController {
 
         return "trainer/assign_trainee";
     }
-
+    @PreAuthorize("hasRole('TRAINER')")
     @PostMapping("/assign/enrol")
     public String enrolTrainee(@RequestParam Integer courseId,
                                @RequestParam Integer traineeId,
@@ -164,14 +165,14 @@ public class TrainerWebController {
             return "redirect:/trainer/assign?courseId=" + courseId + "&error=" + e.getMessage();
         }
     }
-
+    @PreAuthorize("hasRole('TRAINER')")
     @PostMapping("/assign/remove")
     public String removeTrainee(@RequestParam Integer traineeId,
                                 @RequestParam Integer courseId) {
         courseservice.removeTraineeFromCourse(traineeId);
         return "redirect:/trainer/assign?courseId=" + courseId + "&success=removed";
     }
-
+    @PreAuthorize("hasRole('TRAINER')")
     @GetMapping("/profile")
     public String showProfile(Authentication authentication, Model model) {
         String email = authentication.getName();
@@ -181,7 +182,7 @@ public class TrainerWebController {
     }
 
 
-
+    @PreAuthorize("hasRole('TRAINER')")
     @PostMapping("/profile")
     public String updateProfile(
             @ModelAttribute TrainerProfileUpdateDTO dto,
@@ -199,7 +200,7 @@ public class TrainerWebController {
             return "trainer/trainer_profile";
         }
     }
-
+    @PreAuthorize("hasRole('TRAINER')")
     @GetMapping("/mycourses/{id}")
     public String viewMyCourseDetail(@PathVariable Integer id, Model model) {
 
