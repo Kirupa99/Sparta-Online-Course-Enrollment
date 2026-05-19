@@ -2,29 +2,29 @@
 
 ## Project Overview
 
-This project is a production-ready REST API built using Spring Boot for Sparta Global Academy.
+Sparta Academy is a full-stack web application built with Spring Boot, Thymeleaf and secured with Spring Security.
 
-The API manages:
-
-* Trainers
-* Trainees
-* Courses
-
-It supports CRUD operations, trainee enrolment, trainer-course assignments, and database persistence using MySQL.
+The application manages:
+- **Trainers** - can create and manage courses, view and manage trainees, and update their profile
+- **Trainees** - can view their enrolled courses and update their profile
+- **Courses** - can be created, updated, and trainees can be enrolled
 
 ---
 
-# Technologies Used
+## Technologies Used
 
-* Java
-* Spring Boot
-* Spring Data JPA
-* Hibernate
-* MySQL
-* Maven
-* Swagger / OpenAPI
-* JUnit
-* Mockito
+- Java
+- Spring Boot
+- Spring MVC (Thymeleaf frontend)
+- Spring Security
+- Spring Data JPA
+- Hibernate
+- MySQL
+- Maven
+- Swagger / OpenAPI
+- JUnit
+- Mockito
+- Bootstrap 5
 
 ---
 
@@ -72,14 +72,41 @@ It supports CRUD operations, trainee enrolment, trainer-course assignments, and 
 | trainer_id         | INT (FK) |
 | trainee_id         | INT (FK) |
 
+
+### course_trainer (Join Table)
+| Column     | Type     |
+|------------|----------|
+| course_id  | INT (FK) |
+| trainer_id | INT (FK) |
 ---
 
-# Relationships
+## Relationships
 
 - One Trainer can teach many Courses (ManyToMany via course_trainer join table)
 - One Course can have many Trainees (OneToMany)
 - One Trainee belongs to one Course (ManyToOne)
 
+---
+
+## Security
+
+The application uses Spring Security with email/password authentication.
+
+- Passwords are hashed using **BCrypt** — plain text passwords are never stored
+- Both `Trainer` and `Trainee` entities implement `UserDetails`
+- A `CustomUserDetailsService` checks the trainers table first, then the trainees table on login
+- After login, users are redirected to their role-specific dashboard automatically
+
+---
+
+
+## Role-based Access
+
+| Role    | Access                                                        |
+|---------|---------------------------------------------------------------|
+| TRAINER | Full access — manage courses, trainees, trainers, own profile |
+| TRAINEE | View enrolled courses, update own profile                     |
+ 
 ---
 
 # Project Structure
@@ -173,3 +200,26 @@ mvn test -Dtest=CourseServiceTest
 ```
 
 ---
+
+
+
+
+# Screenshots
+
+### Login Page
+![Login](SpartaAcademy/Screenshots/login.png)
+
+### Trainer Signup Page
+![Sign Up](SpartaAcademy/Screenshots/Trainer_Signup.png)
+
+### Trainee Signup Page
+![Sign Up](SpartaAcademy/Screenshots/Trainee_Signup.png)
+
+### Trainer Dashboard
+![Trainer Dashboard](SpartaAcademy/Screenshots/Trainer_Dashboard.png)
+
+### Trainee Dashboard
+![Trainer Dashboard](SpartaAcademy/Screenshots/Trainee_Dashboard.png)
+
+### Update Trainer profile
+![Update profile](SpartaAcademy/Screenshots/Update_trainer_profile.png)
