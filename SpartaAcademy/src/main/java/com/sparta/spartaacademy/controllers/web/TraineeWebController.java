@@ -2,6 +2,7 @@ package com.sparta.spartaacademy.controllers.web;
 
 
 import com.sparta.spartaacademy.dtos.CourseResponseDTO;
+import com.sparta.spartaacademy.dtos.TraineeRequestDTO;
 import com.sparta.spartaacademy.dtos.TraineeResponseDTO;
 import com.sparta.spartaacademy.repositories.TraineeRepository;
 import com.sparta.spartaacademy.services.CourseService;
@@ -12,7 +13,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -41,6 +44,40 @@ public class TraineeWebController
             TraineeResponseDTO dto = traineeservice.getTraineeById(t.getTraineeId());
             model.addAttribute("trainee", dto);
         });
+        return "trainee_profile";
+    }
+
+    @PreAuthorize("hasRole('TRAINEE')")
+    @PostMapping("/profile")
+    public String updateProfile(@RequestParam String firstName,
+                                @RequestParam String lastName,
+                                @RequestParam String email,
+                                @RequestParam(required = false) String city,
+                                @RequestParam(required = false) String password,
+                                Authentication authentication,
+                                Model model) {
+        String currentEmail = authentication.getName();
+        try {
+            traineeRepository.findByEmail(currentEmail).ifPresent(t -> {
+                TraineeRequestDTO dto = new TraineeRequestDTO();
+                dto.setFirstName(firstName);
+                dto.setLastName(lastName);
+                dto.setEmail(email);
+                dto.setCity(city);
+                dto.setPassword(password);
+                dto.setRole("TRAINEE");
+                traineeservice.updateTrainee(t.getTraineeId(), dto);
+            });
+            TraineeResponseDTO updated = traineeRepository.findByEmail(email)
+                    .map(t -> traineeservice.getTraineeById(t.getTraineeId()))
+                    .orElse(null);
+            model.addAttribute("trainee", updated);
+            model.addAttribute("success", "Profile updated successfully!");
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to update profile: " + e.getMessage());
+            traineeRepository.findByEmail(currentEmail).ifPresent(t ->
+                    model.addAttribute("trainee", traineeservice.getTraineeById(t.getTraineeId())));
+        }
         return "trainee_profile";
     }
 
