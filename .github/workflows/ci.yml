@@ -23,6 +23,7 @@ jobs:
 
       - name: Build and test with Maven
         run: mvn -B clean package
+        working-directory: SpartaAcademy
 
   sayHello:
     runs-on: ubuntu-latest
