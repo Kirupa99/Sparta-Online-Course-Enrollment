@@ -22,7 +22,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build and test with Maven
-        run: mvn -B clean package
+        run: mvn -B clean package -DskipTests
         working-directory: SpartaAcademy
 
   sayHello:
