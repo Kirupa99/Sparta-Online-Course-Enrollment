@@ -20,7 +20,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build Maven project
-        run: mvn clean package -DskipTests
+        run: mvn clean package
         working-directory: SpartaAcademy
 
       - name: Login to Docker Hub
